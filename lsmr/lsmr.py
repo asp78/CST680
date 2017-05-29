@@ -33,6 +33,10 @@ def printState():
     global prices
     print "state = {}\nprices = {}".format(state, prices)
 
+def getPrices():
+    global prices
+    return prices
+
 newstate = numpy.array([1,0])
 print getTotalPrice(newstate)
 printState()
