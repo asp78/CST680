@@ -37,6 +37,7 @@ def getPrices():
     global prices
     return prices
 
+'''
 newstate = numpy.array([1,0])
 print getTotalPrice(newstate)
 printState()
@@ -58,3 +59,4 @@ printState()
 makeTrade(newstate)
 
 printState()
+'''

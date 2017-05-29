@@ -1,5 +1,4 @@
 from flask import Flask
-from flask import Response
 
 from lsmr import lsmr
 
@@ -12,4 +11,10 @@ def home_page():
 @app.route('/getPrices/', methods=['GET'])
 def getPrices():
     status = 200
-    return lsmr.getPrices()
+    return str(lsmr.getPrices())
+
+if __name__ == '__main__':
+    try:
+        app.run(host='0.0.0.0', debug=False, threaded=True)
+    except Exception as e:
+        print "{}".format(e)
