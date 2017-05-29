@@ -5,11 +5,12 @@ import numpy
 def C(state):
     sum = 0
     for s in state:
-        sum += math.exp(state)
+        sum += math.exp(s)
     return math.log(sum) # Natural Log
 
 def getTotalPrice(currentState, bid):
-    return C(bid) - C(currentState)
+    newState = bid + currentState
+    return C(newState) - C(currentState)
 
 def doTrade(currentState, prices, bid):
     newState = currentState + bid
@@ -21,7 +22,3 @@ def doTrade(currentState, prices, bid):
         prices[i] = math.exp(newState[i]) / sum
 
     return newState, prices
-
-# def makeTrade(userId, bid):
-#     doTrade(numpy.array(map(int, bid.split(','))))
-#     return
