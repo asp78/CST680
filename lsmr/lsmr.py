@@ -16,7 +16,7 @@ def C(S):
 def getTotalPrice(S):
     return C(S) - C(state)
 
-def makeTrade(S):
+def doTrade(S):
     global state
     global prices
 
@@ -36,6 +36,10 @@ def printState():
 def getPrices():
     global prices
     return prices
+
+def makeTrade(userId, bid):
+    doTrade(numpy.array(map(int, bid.split(','))))
+    return ""
 
 '''
 newstate = numpy.array([1,0])

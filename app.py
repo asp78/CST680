@@ -10,8 +10,11 @@ def home_page():
 
 @app.route('/getPrices/', methods=['GET'])
 def getPrices():
-    status = 200
     return str(lsmr.getPrices())
+
+@app.route('/makeTrade/<userId>/<bids>/', methods=['GET'])
+def makeTrade(userId, bids):
+    return str(lsmr.makeTrade(userId, bids))
 
 if __name__ == '__main__':
     try:
