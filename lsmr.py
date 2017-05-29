@@ -5,7 +5,7 @@ import numpy
 def C(state):
     sum = 0
     for s in state:
-        sum += math.exp(state)
+        sum += math.exp(s)
     return math.log(sum) # Natural Log
 
 def getTotalPrice(currentState, bid):

@@ -1,20 +1,27 @@
 from flask import Flask
+from auction import auction
 
 import lsmr
 
 app = Flask(__name__)
 
+a = auction()
+
 @app.route('/')
 def home_page():
     return 'LMSR FLASK APP'
 
-@app.route('/getPrices/', methods=['GET'])
-def getPrices():
-    return str(lsmr.getPrices())
+@app.route('/getCost/<bid>', methods=['GET'])
+def getPrices(bid):
+    return a.getPrices(bid)
 
-@app.route('/makeTrade/<userId>/<bids>/', methods=['GET'])
-def makeTrade(userId, bids):
-    return str(lsmr.makeTrade(userId, bids))
+@app.route('/makeTrade/<userId>/<bid>/', methods=['GET'])
+def makeTrade(userId, bid):
+    return a.makeTrade(userId, bid)
+
+@app.route('/addUser/<userId>/', methods=['GET'])
+def addUser(userId):
+    return a.addUser(userId)
 
 if __name__ == '__main__':
     try:
