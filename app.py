@@ -11,9 +11,13 @@ a = auction()
 def home_page():
     return 'LMSR FLASK APP'
 
+@app.route('/getPrices/', methods=['GET'])
+def getPrices():
+    return a.getPrices()
+
 @app.route('/getCost/<bid>', methods=['GET'])
-def getPrices(bid):
-    return a.getPrices(bid)
+def getCost(bid):
+    return a.getCost(bid)
 
 @app.route('/makeTrade/<userId>/<bid>/', methods=['GET'])
 def makeTrade(userId, bid):
