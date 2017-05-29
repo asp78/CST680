@@ -1,6 +1,6 @@
 from flask import Flask
 
-from lsmr import lsmr
+import lsmr
 
 app = Flask(__name__)
 
