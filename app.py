@@ -27,6 +27,9 @@ def makeTrade(userId, bid):
 def addUser(userId):
     return a.addUser(userId)
 
+@app.route('/status/<userId>', methods=['GET'])
+    return a.getStatus(userId)
+
 if __name__ == '__main__':
     try:
         app.run(host='0.0.0.0', debug=False, threaded=True)

@@ -33,21 +33,23 @@ class auction:
     def makeTrade(self, userId, bid):
         bid = numpy.array(map(int, bid.split(',')))
         tradeCost = lsmr.getTotalPrice(self.state, bid)
-        retval = "{} does not have enough money to buy {} for {}.".format(userId, bid, tradeCost)
-
+        retval = "User does not exist"
         # If the bidder has enough money to make the trade
         user = self.accounts.get(userId)
 
-        if user is None:
-            retval = "User does not exist"
-        elif user.get('balance') >= tradeCost:
-            self.state, self.prices = lsmr.doTrade(self.state, self.prices, bid)\
+        if user:
+            if user.get('balance') < tradeCost:
+                retval = "{} does not have enough money to buy {} for {}.".format(userId, bid, tradeCost)
+            elif isSell(bid) and not canSell(user.get('bids'), bid):
+                retval = "{} does not own the nesscary contracts to sell {}.".format(userId, bid)
+            else:
+                self.state, self.prices = lsmr.doTrade(self.state, self.prices, bid)\
 
-            user['balance'] -= tradeCost
-            user['bids'] += bid
-            retval = "User: {}\nPosition: {}\nBalance: {}".format(userId,
-                       user.get('bids'),
-                       user.get('balance'))
+                user['balance'] -= tradeCost
+                user['bids'] += bid
+                retval = "User: {}\nPosition: {}\nBalance: {}".format(userId,
+                           user.get('bids'),
+                           user.get('balance'))
 
         return retval
 
@@ -59,5 +61,3 @@ class auction:
             retval = "User Added: {}".format(userId)
 
         return retval
-
-
