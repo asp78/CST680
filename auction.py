@@ -13,8 +13,8 @@ class auction:
     An object to encompass an entire auction
     '''
     def __init__(self):
-        self.prices = numpy.array([0.5, 0.5])
-        self.state = numpy.array([0, 0])
+        self.prices = numpy.array([0.2,0.2,0.2,0.2,0.2])
+        self.state = numpy.array([0, 0, 0, 0, 0])
         self.isRegistrationOpen = True
         self.isAuctionOpen = True
         self.accounts = dict()
@@ -23,32 +23,32 @@ class auction:
 
     def closeAuction(self):
         self.isAuctionOpen = False
-        return "Auction is closed"
+        return "The auction is now closed."
 
     def closeRegistration(self):
         self.isRegistrationOpen = False
-        return "Registration is closed"
+        return "User registration is now closed."
 
     def winningOutcome(self, i):
         self.winningIndex = int(i)
         return self.auctionResults()
 
-    def getStatus(self, id):
-        retval = "User does not exist"
-        user = self.accounts.get(id)
+    def getStatus(self, userId):
+        retval = "User {} does not exist".format(userId)
+        user = self.accounts.get(userId)
         if user:
-            retval = "User: {}\nPosition: {}\nBalance: {}".format(id,
+            retval = "User: {}\nPosition: {}\nBalance: {}".format(userId,
                        user.get('bids'),
                        user.get('balance'))
         return retval
 
     def auctionResults(self):
-        retval = "Auction is still open"
+        retval = "The auction is still open! Check back later."
 
         if not self.isAuctionOpen:
             retval = "<h1>Auction Results</h1><hr>"
 
-            # Payout
+            # Payout to each bidder
             self.payout()
 
             retval += "<h3>Instantaneous Prices: {}</h3>".format(str(self.prices))
@@ -75,7 +75,9 @@ class auction:
         bid = numpy.array(map(int, bid.split(',')))
         retval = 'The auction is closed.'
 
-        if self.isAuctionOpen:
+        if bid.size != self.state.size:
+            retval = "Invalid bid size, include all states even if they are zeros."
+        elif self.isAuctionOpen:
             retval = str(lsmr.getTotalPrice(self.state, bid))
 
         return retval
@@ -83,12 +85,14 @@ class auction:
     def makeTrade(self, userId, bid):
         bid = numpy.array(map(int, bid.split(',')))
         tradeCost = lsmr.getTotalPrice(self.state, bid)
-        retval = "User does not exist"
+        retval = "User {} does not exist".format(userId)
         # If the bidder has enough money to make the trade
         user = self.accounts.get(userId)
 
         if not self.isAuctionOpen:
             retval = "Auction is closed"
+        elif bid.size != self.state.size:
+            retval = "Invalid bid size, include all states even if they are zeros."
         elif user:
             if user.get('balance') < tradeCost:
                 retval = "{} does not have enough money to buy {} for {}.".format(userId, bid, tradeCost)
@@ -112,7 +116,7 @@ class auction:
         if not self.isAuctionOpen:
             retval = "Auction is closed"
         elif userId not in self.accounts:
-            self.accounts[userId] = {'bids': numpy.array([0,0]), 'balance': 10.00}
+            self.accounts[userId] = {'bids': numpy.array([0,0,0,0,0]), 'balance': 10.00}
             retval = "User Added: {}".format(userId)
 
         return retval
