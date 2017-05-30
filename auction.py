@@ -32,6 +32,15 @@ class auction:
         self.winningIndex = int(i)
         return self.getFinalState()
 
+    def getStatus(self, id):
+        retval = "User does not exist"
+        user = self.accounts.get(id)
+        if user:
+            retval = "User: {}\nPosition: {}\nBalance: {}".format(id,
+                       user.get('bids'),
+                       user.get('balance'))
+        return retval
+
     def getFinalState(self):
         retval = ""
 
@@ -46,7 +55,7 @@ class auction:
             print s
 
         # return pretty string
-        
+
 
     def payout(self):
         for key,value in self.accounts.iteritems():
