@@ -30,21 +30,27 @@ class auction:
 
     def winningOutcome(self, i):
         self.winningIndex = int(i)
-        self.getFinalState()
+        return self.getFinalState()
 
     def getFinalState(self):
+        retval = ""
+
         # Payout
         self.payout()
 
         # Order by balance
-        sortedAs = sorted(self.accounts.items(), key=operator.itemgetter(1)['balance'])
+        for s in sorted(self.accounts.iteritems(), key=lambda (x,y): y['balance'], reverse=True):
+            retval += "User: {}\nPosition: {}\nBalance: {}".format(userId,
+                user.get('bids'),
+                user.get('balance'))
+            print s
 
         # return pretty string
-        return sortedAs
+        
 
     def payout(self):
-        for a in accounts:
-            a['balance'] += a['bids'][self.winningIndex]
+        for key,value in self.accounts.iteritems():
+            value['balance'] += value['bids'][self.winningIndex]
 
     def getPrices(self):
         return str(self.prices)

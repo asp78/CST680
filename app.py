@@ -39,9 +39,9 @@ def closeRegistration():
 def closeAuction():
     return a.closeAuction()
 
-@app.route('/winningOutcome/<userId>/', methods=['GET'])
-def winningOutcome(i):
-    return a.winningOutcome(i)
+@app.route('/winningOutcome/<index>/', methods=['GET'])
+def winningOutcome(index):
+    return a.winningOutcome(index)
 
 if __name__ == '__main__':
     try:
