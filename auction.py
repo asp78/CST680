@@ -30,22 +30,24 @@ class auction:
 
     def winningOutcome(self, i):
         self.winningIndex = int(i)
-        return self.getFinalState()
+        return self.auctionResults()
 
-    def getFinalState(self):
-        retval = ""
+    def auctionResults(self):
+        retval = "Auction is still open"
 
-        # Payout
-        self.payout()
+        if not self.isAuctionOpen:
+            retval = "<h1>Auction Results</h1>"
 
-        # Order by balance
-        for s in sorted(self.accounts.iteritems(), key=lambda (x,y): y['balance'], reverse=True):
-            retval += "User: {}\nPosition: {}\nBalance: {}".format(userId,
-                user.get('bids'),
-                user.get('balance'))
-            print s
+            # Payout
+            self.payout()
 
-        # return pretty string
+            # Order by balance
+            for s in sorted(self.accounts.iteritems(), key=lambda (x,y): y['balance'], reverse=True):
+                retval += "<p>User: {}</br>Position: {}</br>Balance: {}</br></br></p>".format(s[0],
+                    s[1].get('bids'),
+                    s[1].get('balance'))
+
+        return retval
         
 
     def payout(self):

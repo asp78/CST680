@@ -43,6 +43,10 @@ def closeAuction():
 def winningOutcome(index):
     return a.winningOutcome(index)
 
+@app.route('/auctionResults/', methods=['GET'])
+def auctionResults():
+    return a.auctionResults()
+
 if __name__ == '__main__':
     try:
         app.run(host='0.0.0.0', debug=False, threaded=True)
