@@ -16,6 +16,7 @@ def getPrices():
     try:
         return a.getPrices()
     except Exception as e:
+        print e
         return "An error occurred."
 
 @app.route('/getCost/<bid>/', methods=['GET'])
@@ -23,6 +24,7 @@ def getCost(bid):
     try:
         return a.getCost(bid)
     except Exception as e:
+        print e
         return "An error occurred."
 
 @app.route('/makeTrade/<userId>/<bid>/', methods=['GET'])
@@ -30,6 +32,7 @@ def makeTrade(userId, bid):
     try:
         return a.makeTrade(userId, bid)
     except Exception as e:
+        print e
         return "An error occurred."
 
 @app.route('/addUser/<userId>/', methods=['GET'])
@@ -37,6 +40,7 @@ def addUser(userId):
     try:
         return a.addUser(userId)
     except Exception as e:
+        print e
         return "An error occurred."
 
 @app.route('/status/<userId>/', methods=['GET'])
@@ -44,6 +48,7 @@ def getStatus(userId):
     try:
         return a.getStatus(userId)
     except Exception as e:
+        print e
         return "An error occurred."
 
 @app.route('/closeRegistration/', methods=['GET'])
@@ -51,6 +56,7 @@ def closeRegistration():
     try:
         return a.closeRegistration()
     except Exception as e:
+        print e
         return "An error occurred."
 
 @app.route('/closeAuction/', methods=['GET'])
@@ -58,6 +64,7 @@ def closeAuction():
     try:
         return a.closeAuction()
     except Exception as e:
+        print e
         return "An error occurred."
 
 @app.route('/winningOutcome/<index>/', methods=['GET'])
@@ -65,6 +72,7 @@ def winningOutcome(index):
     try:
         return a.winningOutcome(index)
     except Exception as e:
+        print e
         return "An error occurred."
 
 @app.route('/auctionResults/', methods=['GET'])
@@ -72,6 +80,7 @@ def auctionResults():
     try:
         return a.auctionResults()
     except Exception as e:
+        print e
         return "An error occurred."
 
 @app.route('/help/', methods=['GET'])

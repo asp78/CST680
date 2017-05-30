@@ -46,20 +46,24 @@ class auction:
         retval = "The auction is still open! Check back later."
 
         if not self.isAuctionOpen:
-            retval = "<h1>Auction Results</h1><hr>"
+            retval = "<html><head><style>table,th,td{border: 1px solid black;}</style></head><body><h1>Auction Results</h1><hr>"
 
             # Payout to each bidder
             self.payout()
 
+            retval += "<h3>Winning Outcome: {}</h3>".format(chr(ord('A') + self.winningIndex))
             retval += "<h3>Instantaneous Prices: {}</h3>".format(str(self.prices))
             retval += "<h3>Market Maker Balance: {}</h3><hr>".format(str(self.balance))
             retval += "<h4>Ordered Bidder Outcomes</h4>"
+            retval += "<table><tr><th>UserId</th><th>Position</th><th>Balance</th></tr>"
 
             # Order by balance
             for s in sorted(self.accounts.iteritems(), key=lambda (x,y): y['balance'], reverse=True):
-                retval += "<p>User: {}</br>Position: {}</br>Balance: {}</br></br></p>".format(s[0],
-                    s[1].get('bids'),
-                    s[1].get('balance'))
+                retval += "<tr><th>{}</th><th>{}</th><th>${}</th></tr>".format(s[0],
+                        s[1].get('bids'),
+                        str(round(s[1].get('balance'), 2)))
+
+            retval += "</table></body></html>"
 
         return retval
         
