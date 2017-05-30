@@ -1,9 +1,9 @@
 import numpy
 import lsmr
 
-def canSell(postion, bid):
+def canSell(position, bid):
     for i in xrange(bid.size):
-        if position[i] + bid[1] < 0:
+        if position[i] + bid[i] < 0:
             return False
     return True
 
