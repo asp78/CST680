@@ -2,6 +2,12 @@ import numpy
 import lsmr
 import operator
 
+def canSell(position, bid):
+    for i in xrange(bid.size):
+        if position[i] + bid[i] < 0:
+            return False
+    return True
+
 class auction:
     '''
     An object to encompass an entire auction
@@ -64,7 +70,7 @@ class auction:
         elif user:
             if user.get('balance') < tradeCost:
                 retval = "{} does not have enough money to buy {} for {}.".format(userId, bid, tradeCost)
-            elif isSell(bid) and not canSell(user.get('bids'), bid):
+            elif not canSell(user.get('bids'), bid):
                 retval = "{} does not own the nesscary contracts to sell {}.".format(userId, bid)
             else:
                 self.state, self.prices = lsmr.doTrade(self.state, self.prices, bid)\
