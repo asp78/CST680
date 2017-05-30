@@ -19,6 +19,7 @@ class auction:
         self.isAuctionOpen = True
         self.accounts = dict()
         self.winningIndex = None
+        self.balance = 0
 
     def closeAuction(self):
         self.isAuctionOpen = False
@@ -45,10 +46,14 @@ class auction:
         retval = "Auction is still open"
 
         if not self.isAuctionOpen:
-            retval = "<h1>Auction Results</h1>"
+            retval = "<h1>Auction Results</h1><hr>"
 
             # Payout
             self.payout()
+
+            retval += "<h3>Instantaneous Prices: {}</h3>".format(str(self.prices))
+            retval += "<h3>Market Maker Balance: {}</h3><hr>".format(str(self.balance))
+            retval += "<h4>Ordered Bidder Outcomes</h4>"
 
             # Order by balance
             for s in sorted(self.accounts.iteritems(), key=lambda (x,y): y['balance'], reverse=True):
@@ -61,6 +66,7 @@ class auction:
     def payout(self):
         for key,value in self.accounts.iteritems():
             value['balance'] += value['bids'][self.winningIndex]
+            self.balance -= value['bids'][self.winningIndex]
 
     def getPrices(self):
         return str(self.prices)
@@ -92,6 +98,7 @@ class auction:
                 self.state, self.prices = lsmr.doTrade(self.state, self.prices, bid)\
 
                 user['balance'] -= tradeCost
+                self.balance += tradeCost
                 user['bids'] += bid
                 retval = "User: {}\nPosition: {}\nBalance: {}".format(userId,
                            user.get('bids'),
@@ -105,7 +112,7 @@ class auction:
         if not self.isAuctionOpen:
             retval = "Auction is closed"
         elif userId not in self.accounts:
-            self.accounts[userId] = {'bids': numpy.array([0,0]), 'balance': 20.00}
+            self.accounts[userId] = {'bids': numpy.array([0,0]), 'balance': 10.00}
             retval = "User Added: {}".format(userId)
 
         return retval
