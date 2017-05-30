@@ -15,7 +15,7 @@ def home_page():
 def getPrices():
     return a.getPrices()
 
-@app.route('/getCost/<bid>', methods=['GET'])
+@app.route('/getCost/<bid>/', methods=['GET'])
 def getCost(bid):
     return a.getCost(bid)
 
@@ -27,17 +27,21 @@ def makeTrade(userId, bid):
 def addUser(userId):
     return a.addUser(userId)
 
-@app.route('/status/<userId>', methods=['GET'])
-def getStatus():
+@app.route('/status/<userId>/', methods=['GET'])
+def getStatus(userId):
     return a.getStatus(userId)
 
-@app.route('/closeRegistration', methods=['GET'])
+@app.route('/closeRegistration/', methods=['GET'])
 def closeRegistration():
     return a.closeRegistration()
 
-@app.route('/closeAuction', methods=['GET'])
+@app.route('/closeAuction/', methods=['GET'])
 def closeAuction():
     return a.closeAuction()
+
+@app.route('/winningOutcome/<userId>/', methods=['GET'])
+def winningOutcome(i):
+    return a.winningOutcome(i)
 
 if __name__ == '__main__':
     try:

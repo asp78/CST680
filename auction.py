@@ -1,5 +1,6 @@
 import numpy
 import lsmr
+import operator
 
 class auction:
     '''
@@ -11,6 +12,7 @@ class auction:
         self.isRegistrationOpen = True
         self.isAuctionOpen = True
         self.accounts = dict()
+        self.winningIndex = None
 
     def closeAuction(self):
         self.isAuctionOpen = False
@@ -19,6 +21,24 @@ class auction:
     def closeRegistration(self):
         self.isRegistrationOpen = False
         return "Registration is closed"
+
+    def winningOutcome(self, i):
+        self.winningIndex = int(i)
+        self.getFinalState()
+
+    def getFinalState(self):
+        # Payout
+        self.payout()
+
+        # Order by balance
+        sortedAs = sorted(self.accounts.items(), key=operator.itemgetter(1)['balance'])
+
+        # return pretty string
+        return sortedAs
+
+    def payout(self):
+        for a in accounts:
+            a['balance'] += a['bids'][self.winningIndex]
 
     def getPrices(self):
         return str(self.prices)
