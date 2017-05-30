@@ -20,9 +20,11 @@ class auction:
 
     def closeAuction(self):
         self.isAuctionOpen = False
+        return "Auction is closed"
 
     def closeRegistration(self):
         self.isRegistrationOpen = False
+        return "Registration is closed"
 
     def getPrices(self):
         return str(self.prices)
@@ -43,7 +45,9 @@ class auction:
         # If the bidder has enough money to make the trade
         user = self.accounts.get(userId)
 
-        if user:
+        if not self.isAuctionOpen:
+            retval = "Auction is closed"
+        elif user:
             if user.get('balance') < tradeCost:
                 retval = "{} does not have enough money to buy {} for {}.".format(userId, bid, tradeCost)
             elif not canSell(user.get('bids'), bid):
@@ -62,7 +66,9 @@ class auction:
     def addUser(self, userId):
         retval = "User {} exists".format(userId)
 
-        if userId not in self.accounts:
+        if not self.isAuctionOpen:
+            retval = "Auction is closed"
+        elif userId not in self.accounts:
             self.accounts[userId] = {'bids': numpy.array([0,0]), 'balance': 20.00}
             retval = "User Added: {}".format(userId)
 
