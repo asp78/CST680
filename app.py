@@ -28,7 +28,16 @@ def addUser(userId):
     return a.addUser(userId)
 
 @app.route('/status/<userId>', methods=['GET'])
+def getStatus():
     return a.getStatus(userId)
+
+@app.route('/closeRegistration', methods=['GET'])
+def closeRegistration():
+    return a.closeRegistration()
+
+@app.route('/closeAuction', methods=['GET'])
+def closeAuction():
+    return a.closeAuction()
 
 if __name__ == '__main__':
     try:
