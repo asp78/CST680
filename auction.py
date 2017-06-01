@@ -14,6 +14,8 @@ class auction:
     '''
     def __init__(self):
         self.prices = numpy.array([0.2,0.2,0.2,0.2,0.2])
+        with open("data.txt", "a") as outfile:
+            outfile.write("{},{},{},{},{}\n".format(self.prices[0],self.prices[1],self.prices[2],self.prices[3],self.prices[4]))
         self.state = numpy.array([0, 0, 0, 0, 0])
         self.isRegistrationOpen = True
         self.isAuctionOpen = True
@@ -111,6 +113,9 @@ class auction:
                 retval = "User: {}\nPosition: {}\nBalance: {}".format(userId,
                            user.get('bids'),
                            user.get('balance'))
+
+                with open("data.txt", "a") as outfile:
+                    outfile.write("{},{},{},{},{}\n".format(self.prices[0],self.prices[1],self.prices[2],self.prices[3],self.prices[4]))
 
         return retval
 
