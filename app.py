@@ -5,7 +5,12 @@ import lsmr
 
 app = Flask(__name__)
 
-a = auction()
+## Auction variables
+auctionName = "CST680 Prediction Market for Final"
+numberOfBins = 10
+binLabels = ['100-90','89-85','84-80','79-75','74-70','69-65','64-60','59-55','54-50','49-0']
+
+a = auction(auctionName, numberOfBins, binLabels)
 
 @app.route('/')
 def home_page():

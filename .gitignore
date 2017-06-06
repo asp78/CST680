@@ -1,4 +1,4 @@
 *.pyc
-data.txt
-data2.txt
+prices.txt
+state.txt
 env/

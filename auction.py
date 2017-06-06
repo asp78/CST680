@@ -11,17 +11,46 @@ def canSell(position, bid):
 class auction:
     '''
     An object to encompass an entire auction
+    
     '''
-    def __init__(self):
-        self.prices = numpy.array([0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1])
-        with open("data.txt", "a") as outfile:
-            outfile.write("{},{},{},{},{},{},{},{},{},{}\n".format(self.prices[0],self.prices[1],self.prices[2],self.prices[3],self.prices[4],self.prices[5],self.prices[6],self.prices[7],self.prices[8],self.prices[9]))
-        self.state = numpy.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+    def __init__(self, name, n, labels):
+        self.name = name
+        self.numBins = n
+        self.labels = labels
+        self.prices = numpy.array([1.0/n] * n)
+        self.state = numpy.array([0] * n)
+        self.printPrices()
+        self.printState()
         self.isRegistrationOpen = True
         self.isAuctionOpen = True
         self.accounts = dict()
         self.winningIndex = None
         self.balance = 0
+
+    def printPrices(self):
+        with open('prices.txt', 'a') as outfile:
+            line = ""
+            for x in xrange(0, self.numBins):
+                if x < self.numBins - 1:
+                    line += "{},".format(self.prices[x])
+                else:
+                    line += "{}".format(self.prices[x])
+
+            line += "\n"
+            outfile.write(line)
+
+    def printState(self):
+        with open('state.txt', 'a') as outfile:
+            line = ""
+
+            for x in xrange(0, self.numBins):
+                if x < self.numBins - 1:
+                    line += "{},".format(self.state[x])
+                else:
+                    line += "{}".format(self.state[x])
+
+            line += "\n"
+            outfile.write(line)
 
     def closeAuction(self):
         self.isAuctionOpen = False
@@ -114,8 +143,7 @@ class auction:
                            user.get('bids'),
                            user.get('balance'))
 
-                with open("data.txt", "a") as outfile:
-                  outfile.write("{},{},{},{},{},{},{},{},{},{}\n".format(self.prices[0],self.prices[1],self.prices[2],self.prices[3],self.prices[4],self.prices[5],self.prices[6],self.prices[7],self.prices[8],self.prices[9]))
+                self.printPrices()
 
         return retval
 
@@ -125,7 +153,7 @@ class auction:
         if not self.isAuctionOpen:
             retval = "Auction is closed"
         elif userId not in self.accounts:
-            self.accounts[userId] = {'bids': numpy.array([0,0,0,0,0,0,0,0,0,0]), 'balance': 10.00}
+            self.accounts[userId] = {'bids': numpy.array([0] * self.numBins), 'balance': 10.00}
             retval = "User Added: {}".format(userId)
 
         return retval
