@@ -1,0 +1,4 @@
+*.pyc
+data.txt
+data2.txt
+env/

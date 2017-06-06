@@ -85,7 +85,7 @@ def auctionResults():
 
 @app.route('/help/', methods=['GET'])
 def help():
-    helpstr = "<h1>Help Page for LSMR Auction</h1><p>This page tells your how to participate in the class auction.<br>Firstly, everything is done using URL commands. This means if you would like to make a trade you would type 'http://69.242.79.111:5000/userId/makeTrade/#,#,#,#,#' into the URL bar. This is the essence of most commands detailed below.</p><p>The only parameters you ever give are a userId which is just some string, and a bid which is of the format '#,#,#,#,#' (without the 's) where each # is an integer representing the amount of dollars you would like to recieve if a certain outcome occurred.</p><p>For example, to place 1 trade for outcome 'B' and 2 for outcome 'C', you would type '69.242.79.111:5000/makeTrade/userId/0,1,2,0,0' into your URL bar.</p><p><strong>NOTE: You must include all 5 bids in your bid, even if they are 0 - ie '0,1,2' is NOT a valid bid</strong></p><hr>"
+    helpstr = "<style>table,th,td{border: 1px solid black;}</style><h1>Help Page for LSMR Auction</h1><p>This page tells your how to participate in the class auction.<br>Firstly, everything is done using URL commands. This means if you would like to make a trade you would type 'http://69.242.79.111:5000/userId/makeTrade/#,#,#,#,#,#,#,#,#,#' into the URL bar. This is the essence of most commands detailed below.</p><p>The only parameters you ever give are a userId which is just some string, and a bid which is of the format '#,#,#,#,#,#,#,#,#,#' (without the 's) where each # is an integer representing the amount of dollars you would like to recieve if a certain outcome occurred.</p><p>For example, to place 1 trade for outcome '90-85' and 2 for outcome '85-80', you would type '69.242.79.111:5000/makeTrade/userId/0,1,2,0,0,0,0,0,0,0' into your URL bar.</p><p><strong>NOTE: You must include all 10 fields in your bid, even if they are 0 - ie '0,1,2' is NOT a valid bid</strong></p><p>Each field in a bid correspond to the following ranges</p><table><tr><th>100-90</th><th>89-85</th><th>84-80</th><th>79-75</th><th>74-70</th><th>69-65</th><th>64-60</th><th>59-55</th><th>54-50</th><th>49-0</th></tr></table><hr>"
 
     helpstr += "<h3>Commands</h3>"
     helpstr += "<p><strong>/help</strong> - Displays this help page</p>"
@@ -95,10 +95,10 @@ def help():
     helpstr += "<p><strong>/getStatus/&lt;userId&gt;</strong> - Returns the current bids and balance of a user.</p>"
     helpstr += "<p><strong>/auctionResults</strong> - Once the auction is complete, this page displays the results of the auction.</p>"
     helpstr += "<hr><h3>Example of use:</h3>"
-    helpstr += "<p><em>http://url:5000/addUser/asp78</em> Adds a user 'asp78' to the system.</p>"
-    helpstr += "<p><em>http://url:5000/getCost/0,1,1,1,0</em> Shows the cost of making a trade for 1 of each outcome B, C, and D.</p>"
-    helpstr += "<p><em>http://url:5000/makeTrade/asp78/0,1,1,1,0</em> Makes the trade for 1 of each outcome B, C, and D.</p>"
-    helpstr += "<p><em>http://url:5000/getStatus/asp78</em> Displays 'asp78's balance and bids</p>"
+    helpstr += "<p><em>http://69.242.79.111:5000/addUser/asp78</em> Adds a user 'asp78' to the system.</p>"
+    helpstr += "<p><em>http://69.242.79.111:5000/getCost/0,1,1,1,0,0,0,0,0,0</em> Shows the cost of making a trade for 1 of each outcome '90-85', '85-80', and '80-75'.</p>"
+    helpstr += "<p><em>http://69.242.79.111:5000/makeTrade/asp78/0,1,1,1,0,0,0,0,0,0</em> Makes the trade for 1 of each outcome '90-85', '85-80', and '80-75'.</p>"
+    helpstr += "<p><em>http://69.242.79.111:5000/getStatus/asp78</em> Displays 'asp78's balance and bids</p>"
     return helpstr
 
 if __name__ == '__main__':

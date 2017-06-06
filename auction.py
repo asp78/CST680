@@ -13,10 +13,10 @@ class auction:
     An object to encompass an entire auction
     '''
     def __init__(self):
-        self.prices = numpy.array([0.2,0.2,0.2,0.2,0.2])
+        self.prices = numpy.array([0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1])
         with open("data.txt", "a") as outfile:
-            outfile.write("{},{},{},{},{}\n".format(self.prices[0],self.prices[1],self.prices[2],self.prices[3],self.prices[4]))
-        self.state = numpy.array([0, 0, 0, 0, 0])
+            outfile.write("{},{},{},{},{},{},{},{},{},{}\n".format(self.prices[0],self.prices[1],self.prices[2],self.prices[3],self.prices[4],self.prices[5],self.prices[6],self.prices[7],self.prices[8],self.prices[9]))
+        self.state = numpy.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
         self.isRegistrationOpen = True
         self.isAuctionOpen = True
         self.accounts = dict()
@@ -115,7 +115,7 @@ class auction:
                            user.get('balance'))
 
                 with open("data.txt", "a") as outfile:
-                    outfile.write("{},{},{},{},{}\n".format(self.prices[0],self.prices[1],self.prices[2],self.prices[3],self.prices[4]))
+                  outfile.write("{},{},{},{},{},{},{},{},{},{}\n".format(self.prices[0],self.prices[1],self.prices[2],self.prices[3],self.prices[4],self.prices[5],self.prices[6],self.prices[7],self.prices[8],self.prices[9]))
 
         return retval
 
@@ -125,7 +125,7 @@ class auction:
         if not self.isAuctionOpen:
             retval = "Auction is closed"
         elif userId not in self.accounts:
-            self.accounts[userId] = {'bids': numpy.array([0,0,0,0,0]), 'balance': 10.00}
+            self.accounts[userId] = {'bids': numpy.array([0,0,0,0,0,0,0,0,0,0]), 'balance': 10.00}
             retval = "User Added: {}".format(userId)
 
         return retval
