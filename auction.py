@@ -1,3 +1,5 @@
+from account import account
+
 import numpy
 import lsmr
 import operator
@@ -23,7 +25,7 @@ class auction:
         self.printState()
         self.isRegistrationOpen = True
         self.isAuctionOpen = True
-        self.accounts = dict()
+        self.accounts = []
         self.winningIndex = None
         self.balance = 0
 
@@ -66,11 +68,21 @@ class auction:
 
     def getStatus(self, userId):
         retval = "User {} does not exist".format(userId)
-        user = self.accounts.get(userId)
+        user = self.getAccount(userId)
         if user:
-            retval = "User: {}\nPosition: {}\nBalance: {}".format(userId,
-                       user.get('bids'),
-                       user.get('balance'))
+            retval = "User: {}\nPosition: {}\nBalance: {}".format(user.username,
+                       user.bids,
+                       user.balance)
+        return retval
+
+    def getAccount(self, userId):
+        retval = None
+
+        for x in self.accounts:
+            if x.username == userId:
+                retval = x
+                break
+
         return retval
 
     def auctionResults(self):
@@ -89,19 +101,20 @@ class auction:
             retval += "<table><tr><th>UserId</th><th>Position</th><th>Balance</th></tr>"
 
             # Order by balance
-            for s in sorted(self.accounts.iteritems(), key=lambda (x,y): y['balance'], reverse=True):
-                retval += "<tr><th>{}</th><th>{}</th><th>${}</th></tr>".format(s[0],
-                        s[1].get('bids'),
-                        str(round(s[1].get('balance'), 2)))
+            self.accounts.sort(key=lambda x: x.balance, reverse=True)
+
+
+            for a in self.accounts:
+                retval += "<tr><th>{}</th><th>{}</th><th>${}</th></tr>".format(a.username,
+                        a.bids, str(round(a.balance, 2)))
 
             retval += "</table></body></html>"
 
         return retval
         
     def payout(self):
-        for key,value in self.accounts.iteritems():
-            value['balance'] += value['bids'][self.winningIndex]
-            self.balance -= value['bids'][self.winningIndex]
+        for x in self.accounts:
+            x.updateBalance(x.bids[self.winningIndex])
 
     def getPrices(self):
         return str(self.prices)
@@ -122,26 +135,26 @@ class auction:
         tradeCost = lsmr.getTotalPrice(self.state, bid)
         retval = "User {} does not exist".format(userId)
         # If the bidder has enough money to make the trade
-        user = self.accounts.get(userId)
+        user = self.getAccount(userId)
 
         if not self.isAuctionOpen:
             retval = "Auction is closed"
         elif bid.size != self.state.size:
             retval = "Invalid bid size, include all states even if they are zeros."
         elif user:
-            if user.get('balance') < tradeCost:
-                retval = "{} does not have enough money to buy {} for {}.".format(userId, bid, tradeCost)
-            elif not canSell(user.get('bids'), bid):
-                retval = "{} does not own the nesscary contracts to sell {}.".format(userId, bid)
+            if user.balance < tradeCost:
+                retval = "{} does not have enough money to buy {} for {}.".format(user.username, bid, tradeCost)
+            elif not canSell(user.bids, bid):
+                retval = "{} does not own the nesscary contracts to sell {}.".format(user.username, bid)
             else:
-                self.state, self.prices = lsmr.doTrade(self.state, self.prices, bid)\
+                self.state, self.prices = lsmr.doTrade(self.state, self.prices, bid)
 
-                user['balance'] -= tradeCost
+                user.updateBalance(-tradeCost)
                 self.balance += tradeCost
-                user['bids'] += bid
-                retval = "User: {}\nPosition: {}\nBalance: {}".format(userId,
-                           user.get('bids'),
-                           user.get('balance'))
+                user.updateBids(bid)
+                retval = "User: {}\nPosition: {}\nBalance: {}".format(user.username,
+                           user.bids,
+                           user.balance)
 
                 self.printPrices()
 
@@ -152,8 +165,17 @@ class auction:
 
         if not self.isAuctionOpen:
             retval = "Auction is closed"
-        elif userId not in self.accounts:
-            self.accounts[userId] = {'bids': numpy.array([0] * self.numBins), 'balance': 10.00}
+        elif not self.isUserInAccounts(userId):
+            self.accounts.append(account(userId, self.numBins))
             retval = "User Added: {}".format(userId)
 
         return retval
+
+    def isUserInAccounts(self, userId):
+        retbool = False
+
+        for x in self.accounts:
+            if x.username == userId:
+                retbool = True
+                
+        return retbool
