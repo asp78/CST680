@@ -1,3 +1,5 @@
 *.pyc
 trades.txt
+prices.txt
+state.txt
 env/
