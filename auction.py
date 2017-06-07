@@ -15,7 +15,7 @@ def canSell(position, bid):
 class auction:
     '''
     An object to encompass an entire auction
-    
+
     '''
     def __init__(self, name, n, labels):
         self.name = name
@@ -33,12 +33,9 @@ class auction:
         with open('prices.txt', 'a') as outfile:
             line = ""
             for x in xrange(0, self.numBins):
-                if x < self.numBins - 1:
-                    line += "{},".format(self.prices[x])
-                else:
-                    line += "{}".format(self.prices[x])
+                line += "{},{},".format(self.getTimeStamp(), self.prices[x])
 
-            line += "\n"
+            line = line[:-1] + '\n'
             outfile.write(line)
 
     def printState(self):
@@ -46,10 +43,9 @@ class auction:
             line = ""
 
             for x in xrange(0, self.numBins):
-                line += "{},".format(self.state[x])
+                line += "{},{},".format(self.getTimeStamp(), self.state[x])
 
-            line = line[:-1]
-
+            line = line[:-1] + '\n'
             outfile.write(line)
 
     # time,username,bid
@@ -61,9 +57,11 @@ class auction:
 
             bidstr = bidstr[:-1]
 
-            line = "{},{},{}\n".format(datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'), user.username, bidstr)
-
+            line = "{},{},{}\n".format(self.getTimeStamp(), user.username, bidstr)
             outfile.write(line)
+
+    def getTimeStamp(self):
+        return datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
 
     def closeAuction(self):
         self.isAuctionOpen = False
@@ -120,7 +118,7 @@ class auction:
             retval += "</table></body></html>"
 
         return retval
-        
+
     def payout(self):
         for x in self.accounts:
             x.updateBalance(x.bids[self.winningIndex])
@@ -164,6 +162,8 @@ class auction:
                 retval = "<h2>Success</h2><button type=\"button\" onClick=\"goBack()\">Return</button><script>function goBack(){var url=window.location.href;url=url.substring(0, url.lastIndexOf(\"/\"));url=url.substring(0, url.lastIndexOf(\"/\"));url=url.replace(\"makeTrade\",\"status\");window.location.href=url;}</script>"
 
                 self.printTrade(user, bid)
+                self.printState()
+                self.printPrices()
 
         return retval
 
@@ -186,5 +186,5 @@ class auction:
         for x in self.accounts:
             if x.username == userId:
                 retbool = True
-                
+
         return retbool

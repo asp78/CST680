@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, send_file
 from auction import auction
 from htmlMaker import helpPage
 from htmlMaker import auctionPage
@@ -23,6 +23,14 @@ def home_page():
 def getPrices():
     try:
         return a.getPrices()
+    except Exception as e:
+        print e
+        return "An error occurred."
+
+@app.route('/getPriceLogs/', methods=['GET'])
+def getPriceLogs():
+    try:
+        return send_file('prices.txt')
     except Exception as e:
         print e
         return "An error occurred."
