@@ -105,14 +105,36 @@ def getLineColor(n):
     return colors[n]
 
 def auctionPage(auc):
-    retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><style>table, th, td {border: 1px solid black;}</style><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script></head><body><div><h1>AUCTION_TITLE_HERE</h1><hr></body></html>"
+    retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><style>table, th, td {border: 1px solid black;}</style><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script></head><body><div><h1>AUCTION_TITLE_HERE</h1></div><div><h2>Leaderboard</h2>LEADERBOARD_HERE</div><hr></body></html>"
 
     retstr = retstr.replace("AUCTION_TITLE_HERE", "{}".format(auc.name))
+    retstr = retstr.replace("LEADERBOARD_HERE", getLeaderboardTable(auc))
+
+    return retstr
+
+def getLeaderboardTable(auc):
+    retstr = "<table><tr><th>User</th><th>Balance</th>"
+
+    for x in auc.labels:
+        retstr += "<th>{}</th>".format(x)
+
+    retstr += "</tr>"
+
+    for x in auc.accounts:
+        retstr += "<tr><th>{}</th>".format(x.username)
+        retstr += "<th>{}</th>".format(x.balance)
+
+        for y in x.bids:
+            retstr += "<th>{}</th>".format(y)
+
+        retstr += "</tr>"
+
+    retstr += "</table>"
 
     return retstr
 
 def helpPage(auc):
-    retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><style>table, th, td {border: 1px solid black;}</style><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script></head><body><div><h1>AUCTION_TITLE_HERE</h1><hr><div><h2>Help Page</h2><p>Shove a new helpful guide here.</p></div></body></html>"
+    retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><style>table, th, td {border: 1px solid black;}</style><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script></head><body><div><h1>AUCTION_TITLE_HERE</h1></div><hr><div><h2>Help Page</h2><p>Shove a new helpful guide here.</p></div></body></html>"
 
     retstr = retstr.replace("AUCTION_TITLE_HERE", "{}".format(auc.name))
 
