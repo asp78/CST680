@@ -151,9 +151,7 @@ class auction:
                 user.updateBalance(-tradeCost)
                 self.balance += tradeCost
                 user.updateBids(bid)
-                retval = "User: {}\nPosition: {}\nBalance: {}".format(user.username,
-                           user.bids,
-                           user.balance)
+                retval = "<h2>Success</h2><button type=\"button\" onClick=\"goBack()\">Return</button><script>function goBack(){var url=window.location.href;url=url.substring(0, url.lastIndexOf(\"/\"));url=url.substring(0, url.lastIndexOf(\"/\"));url=url.replace(\"makeTrade\",\"status\");window.location.href=url;}</script>"
 
                 self.printPrices()
 
