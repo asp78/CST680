@@ -29,26 +29,28 @@ class auction:
         self.winningIndex = None
         self.balance = 0
 
+    # time, prices
     def printPrices(self):
         with open('prices.txt', 'a') as outfile:
-            line = ""
+            line = "{},".format(self.getTimeStamp())
             for x in xrange(0, self.numBins):
-                line += "{},{},".format(self.getTimeStamp(), self.prices[x])
+                line += "{},".format(self.prices[x])
 
             line = line[:-1] + '\n'
             outfile.write(line)
 
-    def printState(self):
-        with open('state.txt', 'a') as outfile:
-            line = ""
+    # time, username, payment, state
+    def printState(self, user, payment):
+        with open('states.txt', 'a') as outfile:
+            line = "{},{},{},".format(self.getTimeStamp(), user.username, payment)
 
             for x in xrange(0, self.numBins):
-                line += "{},{},".format(self.getTimeStamp(), self.state[x])
+                line += "{},".format(self.state[x])
 
             line = line[:-1] + '\n'
             outfile.write(line)
 
-    # time,username,bid
+    # time, username, bid
     def printTrade(self, user, bid):
         with open('trades.txt', 'a') as outfile:
             bidstr = ""
@@ -162,7 +164,7 @@ class auction:
                 retval = "<h2>Success</h2><button type=\"button\" onClick=\"goBack()\">Return</button><script>function goBack(){var url=window.location.href;url=url.substring(0, url.lastIndexOf(\"/\"));url=url.substring(0, url.lastIndexOf(\"/\"));url=url.replace(\"makeTrade\",\"status\");window.location.href=url;}</script>"
 
                 self.printTrade(user, bid)
-                self.printState()
+                self.printState(user, tradeCost)
                 self.printPrices()
 
         return retval

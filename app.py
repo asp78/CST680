@@ -35,6 +35,22 @@ def getPriceLogs():
         print e
         return "An error occurred."
 
+@app.route('/getStateLogs/', methods=['GET'])
+def getStateLogs():
+    try:
+        return send_file('states.txt')
+    except Exception as e:
+        print e
+        return "An error occurred."
+
+@app.route('/getTradeLogs/', methods=['GET'])
+def getTradeLogs():
+    try:
+        return send_file('trades.txt')
+    except Exception as e:
+        print e
+        return "An error occurred."
+
 @app.route('/getCost/<bid>/', methods=['GET'])
 def getCost(bid):
     try:
