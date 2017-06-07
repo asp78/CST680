@@ -29,10 +29,9 @@ class auction:
         self.winningIndex = None
         self.balance = 0
 
-    # time, prices
     def printPrices(self):
         with open('prices.txt', 'a') as outfile:
-            line = "{},".format(self.getTimeStamp())
+            line = "{}".format(self.getTimeStamp())
             for x in xrange(0, self.numBins):
                 line += "{},".format(self.prices[x])
 
@@ -50,7 +49,7 @@ class auction:
             line = line[:-1] + '\n'
             outfile.write(line)
 
-    # time, username, bid
+    # time,username,bid
     def printTrade(self, user, bid):
         with open('trades.txt', 'a') as outfile:
             bidstr = ""
@@ -130,12 +129,10 @@ class auction:
 
     def getCost(self, bid):
         bid = numpy.array(map(int, bid.split(',')))
-        retval = 'The auction is closed.'
+        retval = "Invalid bid size, include all states even if they are zeros."
 
-        if bid.size != self.state.size:
-            retval = "Invalid bid size, include all states even if they are zeros."
-        elif self.isAuctionOpen:
-            retval = str(lsmr.getTotalPrice(self.state, bid))
+        if bid.size == self.state.size:
+            retval = lsmr.getTotalPrice(self.state, bid)
 
         return retval
 

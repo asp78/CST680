@@ -54,7 +54,7 @@ def getTradeLogs():
 @app.route('/getCost/<bid>/', methods=['GET'])
 def getCost(bid):
     try:
-        return a.getCost(bid)
+        return str(a.getCost(bid))
     except Exception as e:
         print e
         return "An error occurred."

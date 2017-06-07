@@ -113,18 +113,38 @@ def auctionPage(auc):
     return retstr
 
 def getLeaderboardTable(auc):
+
     retstr = "<table><tr><th>User</th><th>Balance</th>"
+
+    if auc.isAuctionOpen:
+        retstr += "<th>Balance + All Contracts Sold</th>"
 
     for x in auc.labels:
         retstr += "<th>{}</th>".format(x)
 
     retstr += "</tr>"
 
-    for x in auc.accounts:
-        retstr += "<tr><th>{}</th>".format(x.username)
-        retstr += "<th>{}</th>".format(x.balance)
+    for a in auc.accounts:
 
-        for y in x.bids:
+        bidStr = ''
+        for b in a.bids:
+            bidStr += "-{},".format(b)
+        bidStr = bidStr[:-1]
+
+        cost = auc.getCost(bidStr)
+
+        a.networth = a.balance - cost
+
+    auc.accounts.sort(key=lambda a: a.networth, reverse=True)
+
+    for a in auc.accounts:
+
+        retstr += "<tr><th>{}</th>".format(a.username)
+        retstr += "<th>{}</th>".format(a.balance)
+        if auc.isAuctionOpen:
+            retstr += "<th>{}</th>".format(a.networth)
+
+        for y in a.bids:
             retstr += "<th>{}</th>".format(y)
 
         retstr += "</tr>"
