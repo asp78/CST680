@@ -1,4 +1,5 @@
 from account import account
+from htmlMaker import accountPage
 
 import numpy
 import lsmr
@@ -70,9 +71,7 @@ class auction:
         retval = "User {} does not exist".format(userId)
         user = self.getAccount(userId)
         if user:
-            retval = "User: {}\nPosition: {}\nBalance: {}".format(user.username,
-                       user.bids,
-                       user.balance)
+            retval = accountPage(user, self)
         return retval
 
     def getAccount(self, userId):

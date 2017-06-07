@@ -2,6 +2,7 @@ from flask import Flask
 from auction import auction
 
 import lsmr
+import traceback
 
 app = Flask(__name__)
 
@@ -54,6 +55,7 @@ def getStatus(userId):
         return a.getStatus(userId)
     except Exception as e:
         print e
+        print traceback.print_exc()
         return "An error occurred."
 
 @app.route('/closeRegistration/', methods=['GET'])
