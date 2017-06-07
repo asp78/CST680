@@ -3,5 +3,5 @@ start:
 
 clean:
 	@ rm -rf ./env
-	@ rm -f prices.txt state.txt
+	@ rm -f trades.txt
 	@ find . -name "*.pyc" -type f -delete

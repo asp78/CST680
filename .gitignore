@@ -1,4 +1,3 @@
 *.pyc
-prices.txt
-state.txt
+trades.txt
 env/

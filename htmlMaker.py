@@ -11,8 +11,6 @@ def accountPage(user, auc):
     retstr = retstr.replace("DATA_SETS_HERE", getDatasets(user, auc))
     retstr = retstr.replace("BET_FORM_HERE", getBetForm(user, auc))
 
-    print retstr
-
     return retstr
 
 def getBetForm(user, auc):
@@ -105,3 +103,17 @@ def getLineColor(n):
     colors = ["255,99,132", "120,120,120", "5,36,182", "84,161,83", "63,157,208", "9,76,11", "112,25,125", "149,79,105", "120,237,207", "119,100,10"]
 
     return colors[n]
+
+def auctionPage(auc):
+    retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><style>table, th, td {border: 1px solid black;}</style><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script></head><body><div><h1>AUCTION_TITLE_HERE</h1><hr></body></html>"
+
+    retstr = retstr.replace("AUCTION_TITLE_HERE", "{}".format(auc.name))
+
+    return retstr
+
+def helpPage(auc):
+    retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><style>table, th, td {border: 1px solid black;}</style><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script></head><body><div><h1>AUCTION_TITLE_HERE</h1><hr><div><h2>Help Page</h2><p>Shove a new helpful guide here.</p></div></body></html>"
+
+    retstr = retstr.replace("AUCTION_TITLE_HERE", "{}".format(auc.name))
+
+    return retstr

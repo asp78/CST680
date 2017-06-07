@@ -4,6 +4,7 @@ from htmlMaker import accountPage
 import numpy
 import lsmr
 import operator
+import time, datetime
 
 def canSell(position, bid):
     for i in xrange(bid.size):
@@ -22,8 +23,6 @@ class auction:
         self.labels = labels
         self.prices = numpy.array([1.0/n] * n)
         self.state = numpy.array([0] * n)
-        self.printPrices()
-        self.printState()
         self.isRegistrationOpen = True
         self.isAuctionOpen = True
         self.accounts = []
@@ -47,12 +46,23 @@ class auction:
             line = ""
 
             for x in xrange(0, self.numBins):
-                if x < self.numBins - 1:
-                    line += "{},".format(self.state[x])
-                else:
-                    line += "{}".format(self.state[x])
+                line += "{},".format(self.state[x])
 
-            line += "\n"
+            line = line[:-1]
+
+            outfile.write(line)
+
+    # time,username,bid
+    def printTrade(self, user, bid):
+        with open('trades.txt', 'a') as outfile:
+            bidstr = ""
+            for x in xrange(0, self.numBins):
+                bidstr += "{},".format(bid[x])
+
+            bidstr = bidstr[:-1]
+
+            line = "{},{},{}\n".format(datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'), user.username, bidstr)
+
             outfile.write(line)
 
     def closeAuction(self):
@@ -153,7 +163,7 @@ class auction:
                 user.updateBids(bid)
                 retval = "<h2>Success</h2><button type=\"button\" onClick=\"goBack()\">Return</button><script>function goBack(){var url=window.location.href;url=url.substring(0, url.lastIndexOf(\"/\"));url=url.substring(0, url.lastIndexOf(\"/\"));url=url.replace(\"makeTrade\",\"status\");window.location.href=url;}</script>"
 
-                self.printPrices()
+                self.printTrade(user, bid)
 
         return retval
 
