@@ -1,7 +1,7 @@
 import numpy
 
 def accountPage(user, auc):
-    retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><style>table, th, td {border: 1px solid black;}</style><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script></head><body><div><h1>AUCTION_TITLE_HERE</h1><hr><h2>USERNAME_HERE Details</h2><h3>Balance: BALANCE_HERE</h3></div><div><h3>Current bid placement</h3>BIDS_TABLE_HERE</div><div><h3>Place a new bet</h3>BET_FORM_HERE</div><div><h3>Bid History</h3><div style=\"width: 50%; height: 300px;\"><canvas id=\"myChart\"></canvas></div><script>var ctx=document.getElementById('myChart').getContext('2d');var chart = new Chart(ctx, {type: 'line', data: {labels: [DATA_LABELS_HERE],datasets: [DATA_SETS_HERE]},options: {scales:{yAxes:[{ticks:{stepSize:1}}]}}});</script></div></body></html>"
+    retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><style>table, th, td {border: 1px solid black;}</style><link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\"><script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script></head><body><div class=\"container\"><div><h1>AUCTION_TITLE_HERE</h1><hr><h2>USERNAME_HERE Details</h2><h3>Balance: BALANCE_HERE</h3></div><div><h3>Current bid placement</h3>BIDS_TABLE_HERE</div><div><h3>Place a new bet</h3>BET_FORM_HERE</div><div><h3>Bid History</h3><div style=\"width: 90%; height: 25%;\"><canvas id=\"myChart\"></canvas></div><script>var ctx=document.getElementById('myChart').getContext('2d');var chart = new Chart(ctx, {type: 'line', data: {labels: [DATA_LABELS_HERE],datasets: [DATA_SETS_HERE]},options: {scales:{yAxes:[{ticks:{stepSize:1}}]}}});</script></div></div></body></html>"
 
     retstr = retstr.replace("AUCTION_TITLE_HERE", "{}".format(auc.name))
     retstr = retstr.replace("USERNAME_HERE", "{}".format(user.username))
@@ -14,17 +14,17 @@ def accountPage(user, auc):
     return retstr
 
 def getBetForm(user, auc):
-    retstr = "<table><tr><th>Bin</th>"
+    retstr = "<table class=\"table\"><thead><tr><th>Bin</th>"
 
     for x in auc.labels:
         retstr += "<th>{}</th>".format(x)
 
-    retstr += "</tr><tr><th></th>"
+    retstr += "</tr></thead><tbody><tr><th></th>"
 
     for x in range(0, auc.numBins):
-        retstr += "<th><input id=\"trade{}\" type=\"text\" name=\"{}\" style=\"width:20px;\" value=\"0\"></th>".format(x,x)
+        retstr += "<th><input id=\"trade{}\" type=\"text\" name=\"{}\" style=\"width: 80%;\" value=\"0\"></th>".format(x,x)
 
-    retstr += "</tr></table><button type=\"button\" onClick=\"makeTrade()\">Trade</button><script>function makeTrade(){if (CONDITION_HERE){var url=window.location.href;url=url.replace(\"status\",\"makeTrade\"); url += GET_ELEMENTS_HERE;$.ajax({url: url, success: function(result){window.location.reload(true);}});}}</script><button type=\"button\" onClick=\"checkPrice()\">Check Price</button><script>function checkPrice(){var url=window.location.href; url=url.substring(0,url.lastIndexOf(\"/\"));url=url.substring(0,url.lastIndexOf(\"/\"));url=url.replace(\"status\",\"getCost\");url+= \"/\" + GET_ELEMENTS_HERE;$.ajax({url: url, success: function(result){$(\"#tradeCost\").html('Cost: ' + result);}});}</script><p id=\"tradeCost\">Cost: </p>"
+    retstr += "</tr></tbody></table><div class=\"btn-group\" role=\"group\" aria-label=\"...\"><button type=\"button\" class=\"btn btn-default\" onClick=\"makeTrade()\">Trade</button><script>function makeTrade(){if (CONDITION_HERE){var url=window.location.href;url=url.replace(\"status\",\"makeTrade\"); url += GET_ELEMENTS_HERE;$.ajax({url: url, success: function(result){window.location.reload(true);}});}}</script><button type=\"button\" class=\"btn btn-default\" onClick=\"checkPrice()\">Check Price</button><script>function checkPrice(){var url=window.location.href; url=url.substring(0,url.lastIndexOf(\"/\"));url=url.substring(0,url.lastIndexOf(\"/\"));url=url.replace(\"status\",\"getCost\");url+= \"/\" + GET_ELEMENTS_HERE;$.ajax({url: url, success: function(result){$(\"#tradeCost\").html('Checked Price: ' + result);}});}</script><span class=\"btn btn-primary\" disabled id=\"tradeCost\">Checked Price: </span></div>"
 
     getstr = ""
 
@@ -48,17 +48,17 @@ def getBetForm(user, auc):
     return retstr
 
 def getUserBidsTable(user, auc):
-    retstr = "<table><tr><th>Bin</th>"
+    retstr = "<table class=\"table\"><thead><tr><th>Bin</th>"
 
     for x in auc.labels:
         retstr += "<th>{}</th>".format(x)
 
-    retstr += "</tr><tr><th>Count</th>"
+    retstr += "</tr></thead><tbody><tr><th>Count</th>"
 
     for x in user.bids:
         retstr += "<th>{}</th>".format(x)
 
-    retstr += "</tr></table>"
+    retstr += "</tr></tbody></table>"
 
     return retstr
 
@@ -105,7 +105,7 @@ def getLineColor(n):
     return colors[n]
 
 def auctionPage(auc):
-    retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><style>table, th, td {border: 1px solid black;}</style><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script></head><body><div><h1>AUCTION_TITLE_HERE</h1></div><div><h2>Leaderboard</h2>LEADERBOARD_HERE</div><hr></body></html>"
+    retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><style>table, th, td {border: 1px solid black;}</style><link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\"><script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script></head><body><div class=\"container\"><div><h1>AUCTION_TITLE_HERE</h1><hr></div><div><h2>Leaderboard</h2>LEADERBOARD_HERE</div></div></body></html>"
 
     retstr = retstr.replace("AUCTION_TITLE_HERE", "{}".format(auc.name))
     retstr = retstr.replace("LEADERBOARD_HERE", getLeaderboardTable(auc))
@@ -114,7 +114,7 @@ def auctionPage(auc):
 
 def getLeaderboardTable(auc):
 
-    retstr = "<table><tr><th>User</th><th>Balance</th>"
+    retstr = "<table class=\"table table-hover\"><thead><tr><th>User</th><th>Balance</th>"
 
     if auc.isAuctionOpen:
         retstr += "<th>Balance + All Contracts Sold</th>"
@@ -122,7 +122,7 @@ def getLeaderboardTable(auc):
     for x in auc.labels:
         retstr += "<th>{}</th>".format(x)
 
-    retstr += "</tr>"
+    retstr += "</tr></thead><tbody>"
 
     for a in auc.accounts:
 
@@ -149,12 +149,12 @@ def getLeaderboardTable(auc):
 
         retstr += "</tr>"
 
-    retstr += "</table>"
+    retstr += "</tbody></table>"
 
     return retstr
 
 def helpPage(auc):
-    retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><style>table, th, td {border: 1px solid black;}</style><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script></head><body><div><h1>AUCTION_TITLE_HERE</h1></div><hr><div><h2>Help Page</h2><p>Shove a new helpful guide here.</p></div></body></html>"
+    retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><style>table, th, td {border: 1px solid black;}</style><link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\"><script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script></head><body><div class=\"container\"><div><h1>AUCTION_TITLE_HERE</h1></div><hr><div><h2>Help Page</h2><p>Shove a new helpful guide here.</p></div></div></body></html>"
 
     retstr = retstr.replace("AUCTION_TITLE_HERE", "{}".format(auc.name))
 
