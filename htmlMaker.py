@@ -103,7 +103,7 @@ def getDataString(data, n):
 def getRandomColors(count):
     colors = []
     for i in xrange(count):
-        colors.append('{},{},{}'.format(random.randint(0,255), random.randint(0,255), random.randint(0,255))
+        colors.append('{},{},{}'.format(random.randint(0,255), random.randint(0,255), random.randint(0,255)))
     return colors
 
 def getLineColor(n):
