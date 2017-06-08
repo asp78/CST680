@@ -9,7 +9,7 @@ def accountPage(user, auc):
     retstr = retstr.replace("BALANCE_HERE", "{}".format(user.balance))
     retstr = retstr.replace("BIDS_TABLE_HERE", "{}".format(getUserBidsTable(user, auc)))
     retstr = retstr.replace("DATA_LABELS_HERE", getDataLabels(user))
-    retstr = retstr.replace("DATA_SETS_HERE", getDatasets(user, auc))
+    retstr = retstr.replace("DATA_SETS_HERE", getUserDatasets(user, auc))
     retstr = retstr.replace("BET_FORM_HERE", getBetForm(user, auc))
 
     return retstr
@@ -76,7 +76,7 @@ def getDataLabels(user):
 
     return retstr
 
-def getDatasets(user, auc):
+def getUserDatasets(user, auc):
     data = []
     retstr = ""
 
@@ -89,6 +89,33 @@ def getDatasets(user, auc):
     retstr = retstr[:-1]
 
     return retstr
+
+def netWorth(auc, outcome):
+    retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><style>table, th, td {border: 1px solid black;}</style><link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\"><script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script></head><canvas id=\"netWorthChart\"></canvas></div><script>var ctx=document.getElementById('netWorthChart').getContext('2d');var chart = new Chart(ctx, {type: 'line', data: {labels: [DATA_LABELS_HERE],datasets: [DATA_SETS_HERE]},options: {}});</script>"
+
+    sortedNames, datastr = getNetWorthDatasets(auc, outcome)
+
+    retstr = retstr.replace("DATA_LABELS_HERE", "\"0\",\"1\",\"2\"")
+    retstr = retstr.replace("DATA_SETS_HERE", datastr)
+
+    print retstr
+
+    return retstr
+
+def getNetWorthDatasets(auc, outcome):
+    sortedNames, states = auc.getNetWorth(outcome)
+    retstr = ""
+    data = []
+
+    for x in xrange(0, len(sortedNames)):
+        data.append([item[x] for item in states])
+
+    for x in xrange(0, len(sortedNames)):
+        retstr += "{{label: \"{}\", fill:false, borderColor: 'rgb({})',data: [{}]}},".format(sortedNames[x], getLineColor(x), getDataString(data, x))
+
+    retstr = retstr[:-1]
+
+    return sortedNames, retstr
 
 def getDataString(data, n):
     retstr = ""

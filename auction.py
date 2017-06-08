@@ -50,7 +50,7 @@ class auction:
             outfile.write(line)
 
     # time,username,bid
-    def printTrade(self, user, bid):
+    def printTrade(self, user, bid, payment):
         with open('trades.txt', 'a') as outfile:
             bidstr = ""
             for x in xrange(0, self.numBins):
@@ -58,7 +58,7 @@ class auction:
 
             bidstr = bidstr[:-1]
 
-            line = "{},{},{}\n".format(self.getTimeStamp(), user.username, bidstr)
+            line = "{},{},{},{}\n".format(self.getTimeStamp(), user.username, payment, bidstr)
             outfile.write(line)
 
     def getTimeStamp(self):
@@ -160,7 +160,7 @@ class auction:
                 user.updateBids(bid)
                 retval = "<h2>Success</h2><button type=\"button\" onClick=\"goBack()\">Return</button><script>function goBack(){var url=window.location.href;url=url.substring(0, url.lastIndexOf(\"/\"));url=url.substring(0, url.lastIndexOf(\"/\"));url=url.replace(\"makeTrade\",\"status\");window.location.href=url;}</script>"
 
-                self.printTrade(user, bid)
+                self.printTrade(user, bid, tradeCost)
                 self.printState(user, tradeCost)
                 self.printPrices()
 
@@ -187,3 +187,26 @@ class auction:
                 retbool = True
 
         return retbool
+
+    def getNetWorth(self, outcome):
+        sortedNames = []
+        for x in sorted(self.accounts, key=lambda x: x.username):
+            sortedNames.append(x.username)
+        print sortedNames
+        state = [10.0] * len(sortedNames)
+        print state
+        states = []
+        states.append(list(state))
+
+        with open('trades.txt', 'r') as infile:
+            for line in infile:
+                linesplit = line.split(',')
+                username = linesplit[1]
+                cost = float(linesplit[2])
+                winBid = int(linesplit[3+int(outcome)])
+                index = sortedNames.index(username)
+                state[index] -= cost
+                state[index] += winBid
+                states.append(list(state))
+
+        return sortedNames, states
