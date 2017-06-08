@@ -93,12 +93,24 @@ def getUserDatasets(user, auc):
 def netWorth(auc, outcome):
     retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><style>table, th, td {border: 1px solid black;}</style><link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\"><script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script></head><canvas id=\"netWorthChart\"></canvas></div><script>var ctx=document.getElementById('netWorthChart').getContext('2d');var chart = new Chart(ctx, {type: 'line', data: {labels: [DATA_LABELS_HERE],datasets: [DATA_SETS_HERE]},options: {}});</script>"
 
-    sortedNames, datastr = getNetWorthDatasets(auc, outcome)
+    length, datastr = getNetWorthDatasets(auc, outcome)
 
-    retstr = retstr.replace("DATA_LABELS_HERE", "\"0\",\"1\",\"2\"")
+    retstr = retstr.replace("DATA_LABELS_HERE", getNetWorthDataLabels(length))
     retstr = retstr.replace("DATA_SETS_HERE", datastr)
 
     print retstr
+
+    return retstr
+
+def getNetWorthDataLabels(length):
+    retstr = ""
+
+    data = range(0, length)
+
+    for x in data:
+        retstr += "\"{}\",".format(x)
+
+    retstr = retstr[:-1]
 
     return retstr
 
@@ -115,7 +127,7 @@ def getNetWorthDatasets(auc, outcome):
 
     retstr = retstr[:-1]
 
-    return sortedNames, retstr
+    return len(data[0]), retstr
 
 def getDataString(data, n):
     retstr = ""
