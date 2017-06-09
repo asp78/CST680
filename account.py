@@ -5,6 +5,7 @@ class account:
         self.id = id
         self.name = name
         self.balance = 10.00
+        self.netWorth = 10.00
         self.bids = numpy.array([0] * n)
         self.bidHistory = [list(self.bids)]
         self.maxBidSize = 0
