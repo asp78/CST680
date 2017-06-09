@@ -48,20 +48,6 @@ def getBetForm(user, auc):
 
     return retstr
 
-def getPricesTable(auc):
-    retstr = "<table class=\"table\"><thead><tr><th>Bin</th>"
-
-    for l in auc.labels:
-        retstr += "<th>{}</th>".format(l)
-
-    retstr += "</tr></thead><tbody><tr><th>Count</th>"
-
-    for p in auc.prices:
-        retstr += "<th>{}</th>".format(p)
-
-    retstr += "</tr></tbody></table>"
-    return retstr
-
 def getUserBidsTable(user, auc):
     retstr = "<table class=\"table\"><thead><tr><th>Bin</th>"
 
