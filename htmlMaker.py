@@ -5,7 +5,7 @@ def accountPage(user, auc):
     retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><style>table, th, td {border: 1px solid black;}</style><link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\"><script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script></head><body><div class=\"container\"><div><h1>AUCTION_TITLE_HERE</h1><hr><h2>USERNAME_HERE Details</h2><h3>Balance: BALANCE_HERE</h3></div><div><h3>Current bid placement</h3>BIDS_TABLE_HERE</div><div><h3>Place a new bet</h3>BET_FORM_HERE</div><div><h3>Bid History</h3><div style=\"width: 90%; height: 25%;\"><canvas id=\"myChart\"></canvas></div><script>var ctx=document.getElementById('myChart').getContext('2d');var chart = new Chart(ctx, {type: 'line', data: {labels: [DATA_LABELS_HERE],datasets: [DATA_SETS_HERE]},options: {scales:{yAxes:[{ticks:{stepSize:1}}]}}});</script></div></div></body></html>"
 
     retstr = retstr.replace("AUCTION_TITLE_HERE", "{}".format(auc.name))
-    retstr = retstr.replace("USERNAME_HERE", "{}".format(user.username))
+    retstr = retstr.replace("USERNAME_HERE", "{}".format(user.name))
     retstr = retstr.replace("BALANCE_HERE", "{}".format(user.balance))
     retstr = retstr.replace("BIDS_TABLE_HERE", "{}".format(getUserBidsTable(user, auc)))
     retstr = retstr.replace("DATA_LABELS_HERE", getDataLabels(user))
@@ -185,7 +185,7 @@ def getLeaderboardTable(auc):
 
     for a in auc.accounts:
 
-        retstr += "<tr><th>{}</th>".format(a.username)
+        retstr += "<tr><th>{}</th>".format(a.name)
         retstr += "<th>{}</th>".format(a.balance)
         if auc.isAuctionOpen:
             retstr += "<th>{}</th>".format(a.networth)

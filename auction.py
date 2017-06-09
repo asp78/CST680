@@ -38,10 +38,10 @@ class auction:
             line = line[:-1] + '\n'
             outfile.write(line)
 
-    # time, username, payment, state
+    # time, name, payment, state
     def printState(self, user, payment):
         with open('states.txt', 'a') as outfile:
-            line = "{},{},{},".format(self.getTimeStamp(), user.username, payment)
+            line = "{},{},{},".format(self.getTimeStamp(), user.name, payment)
 
             for x in xrange(0, self.numBins):
                 line += "{},".format(self.state[x])
@@ -49,7 +49,7 @@ class auction:
             line = line[:-1] + '\n'
             outfile.write(line)
 
-    # time,username,bid
+    # time,name,bid
     def printTrade(self, user, bid, payment):
         with open('trades.txt', 'a') as outfile:
             bidstr = ""
@@ -58,7 +58,7 @@ class auction:
 
             bidstr = bidstr[:-1]
 
-            line = "{},{},{},{}\n".format(self.getTimeStamp(), user.username, payment, bidstr)
+            line = "{},{},{},{}\n".format(self.getTimeStamp(), user.name, payment, bidstr)
             outfile.write(line)
 
     def getTimeStamp(self):
@@ -87,7 +87,7 @@ class auction:
         retval = None
 
         for x in self.accounts:
-            if x.username == userId:
+            if x.id == userId:
                 retval = x
                 break
 
@@ -113,7 +113,7 @@ class auction:
 
 
             for a in self.accounts:
-                retval += "<tr><th>{}</th><th>{}</th><th>${}</th></tr>".format(a.username,
+                retval += "<tr><th>{}</th><th>{}</th><th>${}</th></tr>".format(a.name,
                         a.bids, str(round(a.balance, 2)))
 
             retval += "</table></body></html>"
@@ -149,9 +149,9 @@ class auction:
             retval = "Invalid bid size, include all states even if they are zeros."
         elif user:
             if user.balance < tradeCost:
-                retval = "{} does not have enough money to buy {} for {}.".format(user.username, bid, tradeCost)
+                retval = "{} does not have enough money to buy {} for {}.".format(user.name, bid, tradeCost)
             elif not canSell(user.bids, bid):
-                retval = "{} does not own the nesscary contracts to sell {}.".format(user.username, bid)
+                retval = "{} does not own the nesscary contracts to sell {}.".format(user.name, bid)
             else:
                 self.state, self.prices = lsmr.doTrade(self.state, self.prices, bid)
 
@@ -166,7 +166,7 @@ class auction:
 
         return retval
 
-    def addUser(self, userId):
+    def addUser(self, userId, userName):
         retval = "User {} exists".format(userId)
 
         if not self.isAuctionOpen:
@@ -174,7 +174,7 @@ class auction:
         elif not self.isRegistrationOpen:
             retval = "Registration is closed"
         elif not self.isUserInAccounts(userId):
-            self.accounts.append(account(userId, self.numBins))
+            self.accounts.append(account(userId, userName, self.numBins))
             retval = "User Added: {}".format(userId)
 
         return retval
@@ -183,15 +183,15 @@ class auction:
         retbool = False
 
         for x in self.accounts:
-            if x.username == userId:
+            if x.id== userId:
                 retbool = True
 
         return retbool
 
     def getNetWorth(self, outcome):
         sortedNames = []
-        for x in sorted(self.accounts, key=lambda x: x.username):
-            sortedNames.append(x.username)
+        for x in sorted(self.accounts, key=lambda x: x.name):
+            sortedNames.append(x.name)
         print sortedNames
         state = [10.0] * len(sortedNames)
         print state

@@ -76,10 +76,10 @@ def makeTrade(userId, bid):
         print traceback.print_exc()
         return "An error occurred."
 
-@app.route('/addUser/<userId>/', methods=['GET'])
-def addUser(userId):
+@app.route('/addUser/<userId>/<userName>', methods=['GET'])
+def addUser(userId, userName):
     try:
-        return a.addUser(userId)
+        return a.addUser(userId, userName)
     except Exception as e:
         print traceback.print_exc()
         return "An error occurred."
