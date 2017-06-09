@@ -173,18 +173,22 @@ class auction:
             retval = "Auction is closed"
         elif not self.isRegistrationOpen:
             retval = "Registration is closed"
-        elif not self.isUserInAccounts(userId):
+        elif not self.isUserInAccounts(userId, userName):
             self.accounts.append(account(userId, userName, self.numBins))
             retval = "User Added: {}".format(userId)
 
         return retval
 
-    def isUserInAccounts(self, userId):
+    def isUserInAccounts(self, userId, userName):
         retbool = False
 
         for x in self.accounts:
-            if x.id== userId:
+            if x.id == userId:
                 retbool = True
+                break
+            if x.name == userName:
+                retbool = True
+                break
 
         return retbool
 

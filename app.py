@@ -28,7 +28,7 @@ def getPrices():
         print traceback.print_exc()
         return "An error occurred."
 
-@app.route('/getNetWorth/<outcome>/')
+@app.route('/getNetWorths/<outcome>/')
 def getNetWorth(outcome):
     try:
         return netWorth(a, outcome)

@@ -7,6 +7,7 @@ url='localhost:5000'
 curl "$url/addUser/1ID" #fail withoutName
 curl "$url/addUser/1ID/1Name"
 curl "$url/addUser/1ID/1Name" # Test adding fail
+curl "$url/addUser/someID/1Name" # Test adding fail
 curl "$url/addUser/2ID/2NAME"
 curl "$url/addUser/3ID/3NAME"
 curl "$url/closeRegistration/"
