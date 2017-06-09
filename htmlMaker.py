@@ -48,6 +48,20 @@ def getBetForm(user, auc):
 
     return retstr
 
+def getPricesTable(auc):
+    retstr = "<table class=\"table\"><thead><tr><th>Bin</th>"
+
+    for l in auc.labels:
+        retstr += "<th>{}</th>".format(l)
+
+    retstr += "</tr></thead><tbody><tr><th>Count</th>"
+
+    for p in auc.prices:
+        retstr += "<th>{}</th>".format(p)
+
+    retstr += "</tr></tbody></table>"
+    return retstr
+
 def getUserBidsTable(user, auc):
     retstr = "<table class=\"table\"><thead><tr><th>Bin</th>"
 
@@ -67,7 +81,6 @@ def getDataLabels(user):
     retstr = ""
 
     labels = range(0, len(user.bidHistory))
-    #labels = range(0, 8)
 
     for x in labels:
         retstr += "\"{}\",".format(x)
@@ -151,35 +164,62 @@ def getLineColor(n):
     return colors[n]
 
 def auctionPage(auc):
-    retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><style>table, th, td {border: 1px solid black;}</style><link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\"><script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script></head><body><div class=\"container\"><div><h1>AUCTION_TITLE_HERE</h1><hr></div><div><h2>Leaderboard</h2>LEADERBOARD_HERE</div></div></body></html>"
+    retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><style>table, th, td {border: 1px solid black;}</style><link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\"><script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script>"
+    retstr += "</head><body><div class=\"container\"><div><h1>AUCTION_TITLE_HERE</h1><hr></div>CLOSED_INFO_HERE<div><h2>Market Status</h2>STATUS_HERE</div><div><h2>Leaderboard</h2>LEADERBOARD_HERE</div></div></body></html>"
 
     retstr = retstr.replace("AUCTION_TITLE_HERE", "{}".format(auc.name))
+    retstr = retstr.replace("CLOSED_INFO_HERE", getClosedInfo(auc))
+    retstr = retstr.replace("STATUS_HERE", getStatusTable(auc))
     retstr = retstr.replace("LEADERBOARD_HERE", getLeaderboardTable(auc))
 
     return retstr
 
-def getLeaderboardTable(auc):
+def getClosedInfo(auc):
+    retstr = '<h4>Auction Is Open</h4>'
+    if auc.winningIndex:
+        payouts = 0
+        for a in auc.accounts:
+            payouts += a.bids[auc.winningIndex]
 
-    retstr = "<table class=\"table table-hover\"><thead><tr><th>User</th><th>Balance</th>"
+        retstr = '<h3>Winning Outcome: {}</h3>'.format(auc.labels[auc.winningIndex])
+        retstr += '<h3>Market Maker Balance: {}</h3>'.format(auc.balance - payouts)
+    return retstr
+
+def getStatusTable(auc):
+    retstr = "<div class=\"row\"><div class=\"col-md-4\">"
+    retstr +="<table class=\"table\"><thead><tr><th>Contract</th><th>Price</th><th># Owned</th></tr></thead><tbody>"
+    for i in xrange(auc.numBins):
+        retstr += "<tr><th>{}</th>".format(auc.labels[i])
+        retstr += "<th>{}</th>".format(auc.prices[i])
+        retstr += "<th>{}</th></tr>".format(auc.state[i])
+
+    retstr += "</tbody></table></div></div>"
+    return retstr
+
+def getLeaderboardTable(auc):
+    retstr = "<div class=\"row\"><div class=\"col-xs-12\">"
+    retstr += "<table class=\"table table-hover\"><thead><tr><th>User</th><th>Balance</th>"
 
     if auc.isAuctionOpen:
-        retstr += "<th>Balance + All Contracts Sold</th>"
+        retstr += "<th>Balance + Contracts Sold</th>"
+    elif auc.winningIndex:
+        retstr += "<th>Networth</th>"
 
     for x in auc.labels:
         retstr += "<th>{}</th>".format(x)
 
-    retstr += "</tr></thead><tbody>"
+    retstr += "</tr></thead><tbody><div><div>"
 
     for a in auc.accounts:
-
-        bidStr = ''
-        for b in a.bids:
-            bidStr += "-{},".format(b)
-        bidStr = bidStr[:-1]
-
-        cost = auc.getCost(bidStr)
-
-        a.networth = a.balance - cost
+        if auc.isAuctionOpen:
+            bidStr = ''
+            for b in a.bids:
+                bidStr += "-{},".format(b)
+            bidStr = bidStr[:-1]
+            cost = auc.getCost(bidStr)
+            a.networth = a.balance - cost
+        elif auc.winningIndex:
+            a.networth = a.balance + a.bids[auc.winningIndex]
 
     auc.accounts.sort(key=lambda a: a.networth, reverse=True)
 
@@ -187,7 +227,7 @@ def getLeaderboardTable(auc):
 
         retstr += "<tr><th>{}</th>".format(a.name)
         retstr += "<th>{}</th>".format(a.balance)
-        if auc.isAuctionOpen:
+        if auc.isAuctionOpen or auc.winningIndex:
             retstr += "<th>{}</th>".format(a.networth)
 
         for y in a.bids:

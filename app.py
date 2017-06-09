@@ -12,13 +12,19 @@ app = Flask(__name__)
 ## Auction variables
 auctionName = "CST680 Prediction Market for Final"
 numberOfBins = 10
-binLabels = ['100-90','89-85','84-80','79-75','74-70','69-65','64-60','59-55','54-50','49-0']
+binLabels = ['100-90','89.9-85','84.9-80','79.9-75','74.9-70','69.9-65','64.9-60','59.9-55','54.9-50','49.9-0']
 
 a = auction(auctionName, numberOfBins, binLabels)
 
 @app.route('/')
+@app.route('/auctionResults/')
+@app.route('/status/')
 def home_page():
-    return auctionPage(a)
+    try:
+        return auctionPage(a)
+    except Exception as e:
+        print traceback.print_exc()
+        return "An error occurred."
 
 @app.route('/getPrices/', methods=['GET'])
 def getPrices():
@@ -112,14 +118,6 @@ def closeAuction():
 def winningOutcome(index):
     try:
         return a.winningOutcome(index)
-    except Exception as e:
-        print traceback.print_exc()
-        return "An error occurred."
-
-@app.route('/auctionResults/', methods=['GET'])
-def auctionResults():
-    try:
-        return a.auctionResults()
     except Exception as e:
         print traceback.print_exc()
         return "An error occurred."

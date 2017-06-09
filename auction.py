@@ -1,5 +1,5 @@
 from account import account
-from htmlMaker import accountPage
+from htmlMaker import accountPage, auctionPage
 
 import numpy
 import lsmr
@@ -79,8 +79,11 @@ class auction:
         return "User registration is now closed."
 
     def winningOutcome(self, i):
-        self.winningIndex = int(i)
-        return self.auctionResults()
+        retstr = 'Auction is open, cannot set outcome.'
+        if (not self.isAuctionOpen):
+            self.winningIndex = int(i)
+            retstr = auctionPage(self)
+        return retstr
 
     def getStatus(self, userId):
         retval = "User {} does not exist".format(userId)
@@ -98,37 +101,6 @@ class auction:
                 break
 
         return retval
-
-    def auctionResults(self):
-        retval = "The auction is still open! Check back later."
-
-        if not self.isAuctionOpen:
-            retval = "<html><head><style>table,th,td{border: 1px solid black;}</style></head><body><h1>Auction Results</h1><hr>"
-
-            # Payout to each bidder
-            self.payout()
-
-            retval += "<h3>Winning Outcome: {}</h3>".format(chr(ord('A') + self.winningIndex))
-            retval += "<h3>Instantaneous Prices: {}</h3>".format(str(self.prices))
-            retval += "<h3>Market Maker Balance: {}</h3><hr>".format(str(self.balance))
-            retval += "<h4>Ordered Bidder Outcomes</h4>"
-            retval += "<table><tr><th>UserId</th><th>Position</th><th>Balance</th></tr>"
-
-            # Order by balance
-            self.accounts.sort(key=lambda x: x.balance, reverse=True)
-
-
-            for a in self.accounts:
-                retval += "<tr><th>{}</th><th>{}</th><th>${}</th></tr>".format(a.name,
-                        a.bids, str(round(a.balance, 2)))
-
-            retval += "</table></body></html>"
-
-        return retval
-
-    def payout(self):
-        for x in self.accounts:
-            x.updateBalance(x.bids[self.winningIndex])
 
     def getPrices(self):
         return str(self.prices)

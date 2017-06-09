@@ -24,5 +24,6 @@ curl "$url/makeTrade/2ID/0,0,1,2,1,2,0,0,0,0/"
 curl "$url/makeTrade/3ID/0,1,1,2,0,0,0,0,0,0/"
 curl "$url/status/3ID/"
 curl "$url/status/4ID/" # Test fail
+curl "$url/winningOutcome/2/" #fail to set outcome
 curl "$url/closeAuction/"
 curl "$url/winningOutcome/2/"
