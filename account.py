@@ -9,6 +9,9 @@ class account:
         self.bidHistory = [list(self.bids)]
         self.maxBidSize = 0
 
+    def __str__(self):
+        return '{},{},{},{}'.format(self.id, self.name, self.balance, self.bids)
+
     def updateBids(self, bid):
         self.bids += bid
         self.updateMaxBidSize()

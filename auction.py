@@ -61,6 +61,12 @@ class auction:
             line = "{},{},{},{}\n".format(self.getTimeStamp(), user.name, payment, bidstr)
             outfile.write(line)
 
+    def printAccounts(self):
+        with open('accounts.txt', 'w') as outfile:
+            outfile.write('File Write @:{}\n'.format(datetime.datetime.now()))
+            for a in self.accounts:
+                outfile.write(str(a)+'\n')
+
     def getTimeStamp(self):
         return datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
 
@@ -138,7 +144,7 @@ class auction:
 
     def makeTrade(self, userId, bid):
         bid = numpy.array(map(int, bid.split(',')))
-        tradeCost = lsmr.getTotalPrice(self.state, bid)
+
         retval = "User {} does not exist".format(userId)
         # If the bidder has enough money to make the trade
         user = self.getAccount(userId)
@@ -148,6 +154,7 @@ class auction:
         elif bid.size != self.state.size:
             retval = "Invalid bid size, include all states even if they are zeros."
         elif user:
+            tradeCost = lsmr.getTotalPrice(self.state, bid)
             if user.balance < tradeCost:
                 retval = "{} does not have enough money to buy {} for {}.".format(user.name, bid, tradeCost)
             elif not canSell(user.bids, bid):
@@ -163,6 +170,7 @@ class auction:
                 self.printTrade(user, bid, tradeCost)
                 self.printState(user, tradeCost)
                 self.printPrices()
+                self.printAccounts()
 
         return retval
 
