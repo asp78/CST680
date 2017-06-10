@@ -28,6 +28,14 @@ class auction:
         self.accounts = []
         self.winningIndex = None
         self.balance = 0
+        self.initFiles()
+
+    def initFiles(self):
+        self.printPrices()
+        with open('trades.txt', 'a') as tradefile:
+            line = "{}\n".format(self.getTimeStamp())
+            tradefile.write(line)
+
 
     def printPrices(self):
         with open('prices.txt', 'a') as outfile:
@@ -176,19 +184,21 @@ class auction:
         sortedNames = []
         for x in sorted(self.accounts, key=lambda x: x.name):
             sortedNames.append(x.name)
-        state = [10.0] * len(sortedNames)
         states = []
-        states.append(list(state))
+        state = [10.0] * len(sortedNames)
 
         with open('trades.txt', 'r') as infile:
+            initTime = next(infile).strip()
+            states.append((initTime, list(state)))
             for line in infile:
                 linesplit = line.split(',')
+                time = linesplit[0]
                 username = linesplit[1]
                 cost = float(linesplit[2])
                 winBid = int(linesplit[3+int(outcome)])
                 index = sortedNames.index(username)
                 state[index] -= cost
                 state[index] += winBid
-                states.append(list(state))
+                states.append((time, list(state)))
 
         return sortedNames, states

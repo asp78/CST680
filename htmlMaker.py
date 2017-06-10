@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
 import numpy
 from random import randint
 import os.path
+from datetime import datetime
 
 def accountPage(user, auc):
     retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\"><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script></head><body><div class=\"container\"><div><h1>AUCTION_TITLE_HERE</h1><hr><h2>USERNAME_HERE Details</h2><h3>Balance: BALANCE_HERE</h3></div><div><h3>Current bid placement</h3>BIDS_TABLE_HERE</div><div><h3>Place a new bet</h3>BET_FORM_HERE</div><div><h3>Bid History</h3><div style=\"width: 90%; height: 25%;\"><canvas id=\"myChart\"></canvas></div><script>var ctx=document.getElementById('myChart').getContext('2d');var chart = new Chart(ctx, {type: 'line', data: {labels: [DATA_LABELS_HERE],datasets: [DATA_SETS_HERE]},options: {scales:{yAxes:[{ticks:{stepSize:1}}]}}});</script></div></div></body></html>"
@@ -84,7 +86,7 @@ def getUserDatasets(user, auc):
         data.append([item[x] for item in user.bidHistory])
 
     for x in xrange(0, user.bids.size):
-        retstr += "{{label: \"{}\", fill:false, borderColor: 'rgb({})',data: [{}]}},".format(auc.labels[x], getLineColor(x), getDataString(data, x))
+        retstr += "{{label: \"{}\", fill:false, steppedLine: true, borderColor: 'rgb({})',data: [{}]}},".format(auc.labels[x], getLineColor(x), getDataString(data, x))
 
     retstr = retstr[:-1]
 
@@ -94,46 +96,66 @@ def netWorth(auc, outcome):
     retstr = ''
     if os.path.isfile('trades.txt'):
         retstr = "<canvas id=\"netWorthChart\"></canvas></div><script>var ctx=document.getElementById('netWorthChart').getContext('2d');var chart = new Chart(ctx, {type: 'line', data: {labels: [DATA_LABELS_HERE],datasets: [DATA_SETS_HERE]},options: {}});</script>"
+        #TODO: add scale to options above: xAxes: 
+        # [{
+        # type: "time",
+        # time: {
+        # 	format: timeFormat,
+        # 	// round: 'day'
+        # 	tooltipFormat: 'll HH:mm'
+        # },
+        # scaleLabel: {
+        # 	display: true,
+        # 	labelString: 'Date'
+        # }
+        # }, ],
 
-        length, datastr = getNetWorthDatasets(auc, outcome)
+        datastr, start, end = getNetWorthDataAndStartEnd(auc, outcome)
 
-        retstr = retstr.replace("DATA_LABELS_HERE", getNetWorthDataLabels(length))
+        retstr = retstr.replace("DATA_LABELS_HERE", getNetWorthDataLabels(start, end))
         retstr = retstr.replace("DATA_SETS_HERE", datastr)
     return retstr
 
-def getNetWorthDataLabels(length):
-    retstr = ""
+#TODO: this needs work
+def getNetWorthDataLabels(start, end):
 
-    data = range(0, length)
+    # start = datetime.strptime(start, '%b %d %Y') Somehow get a date this is not working
+    # end = datetime.strptime(end, '%b %d %Y')
+    # find some number of points between start and end
 
-    for x in data:
-        retstr += "\"{}\",".format(x)
-
-    retstr = retstr[:-1]
+    retstr = '"{}", "{}"'.format(start, end) #return them comma seperated
 
     return retstr
 
-def getNetWorthDatasets(auc, outcome):
+def getNetWorthDataAndStartEnd(auc, outcome):
     sortedNames, states = auc.getNetWorth(outcome)
     retstr = ""
-    data = []
     colors = getRandomColors(len(sortedNames))
 
     for x in xrange(0, len(sortedNames)):
-        data.append([item[x] for item in states])
-
-    for x in xrange(0, len(sortedNames)):
-        retstr += "{{label: \"{}\", fill:false, borderColor: 'rgb({})',data: [{}]}},".format(sortedNames[x], colors[x], getDataString(data, x))
+        retstr += "{{label: \"{}\", fill:false, steppedLine: true, borderColor: 'rgb({})',data: [{}]}},".format(sortedNames[x], colors[x], getNetWorthDataString(states, x))
 
     retstr = retstr[:-1]
 
-    return len(data[0]), retstr
+    return retstr, states[0][0], states[len(states)-1][0]
 
 def getDataString(data, n):
     retstr = ""
 
     for x in data[n]:
         retstr += "{},".format(x)
+
+    retstr = retstr[:-1]
+
+    return retstr
+
+def getNetWorthDataString(states, n):
+    retstr = ""
+
+    for s in states:
+        retstr += '{'
+        retstr += ' x:"{}", y:{}'.format( s[0], s[1][n])
+        retstr += '},'
 
     retstr = retstr[:-1]
 
