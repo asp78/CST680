@@ -80,7 +80,7 @@ class auction:
 
     def winningOutcome(self, i):
         retstr = 'Auction is open, cannot set outcome.'
-        if (not self.isAuctionOpen):
+        if not self.isAuctionOpen:
             self.winningIndex = int(i)
             retstr = auctionPage(self)
         return retstr
@@ -176,9 +176,7 @@ class auction:
         sortedNames = []
         for x in sorted(self.accounts, key=lambda x: x.name):
             sortedNames.append(x.name)
-        print sortedNames
         state = [10.0] * len(sortedNames)
-        print state
         states = []
         states.append(list(state))
 

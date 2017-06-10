@@ -1,8 +1,9 @@
 import numpy
 from random import randint
+import os.path
 
 def accountPage(user, auc):
-    retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><style>table, th, td {border: 1px solid black;}</style><link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\"><script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script></head><body><div class=\"container\"><div><h1>AUCTION_TITLE_HERE</h1><hr><h2>USERNAME_HERE Details</h2><h3>Balance: BALANCE_HERE</h3></div><div><h3>Current bid placement</h3>BIDS_TABLE_HERE</div><div><h3>Place a new bet</h3>BET_FORM_HERE</div><div><h3>Bid History</h3><div style=\"width: 90%; height: 25%;\"><canvas id=\"myChart\"></canvas></div><script>var ctx=document.getElementById('myChart').getContext('2d');var chart = new Chart(ctx, {type: 'line', data: {labels: [DATA_LABELS_HERE],datasets: [DATA_SETS_HERE]},options: {scales:{yAxes:[{ticks:{stepSize:1}}]}}});</script></div></div></body></html>"
+    retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\"><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script></head><body><div class=\"container\"><div><h1>AUCTION_TITLE_HERE</h1><hr><h2>USERNAME_HERE Details</h2><h3>Balance: BALANCE_HERE</h3></div><div><h3>Current bid placement</h3>BIDS_TABLE_HERE</div><div><h3>Place a new bet</h3>BET_FORM_HERE</div><div><h3>Bid History</h3><div style=\"width: 90%; height: 25%;\"><canvas id=\"myChart\"></canvas></div><script>var ctx=document.getElementById('myChart').getContext('2d');var chart = new Chart(ctx, {type: 'line', data: {labels: [DATA_LABELS_HERE],datasets: [DATA_SETS_HERE]},options: {scales:{yAxes:[{ticks:{stepSize:1}}]}}});</script></div></div></body></html>"
 
     retstr = retstr.replace("AUCTION_TITLE_HERE", "{}".format(auc.name))
     retstr = retstr.replace("USERNAME_HERE", "{}".format(user.name))
@@ -90,15 +91,14 @@ def getUserDatasets(user, auc):
     return retstr
 
 def netWorth(auc, outcome):
-    retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><style>table, th, td {border: 1px solid black;}</style><link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\"><script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script></head><canvas id=\"netWorthChart\"></canvas></div><script>var ctx=document.getElementById('netWorthChart').getContext('2d');var chart = new Chart(ctx, {type: 'line', data: {labels: [DATA_LABELS_HERE],datasets: [DATA_SETS_HERE]},options: {}});</script>"
+    retstr = ''
+    if os.path.isfile('trades.txt'):
+        retstr = "<canvas id=\"netWorthChart\"></canvas></div><script>var ctx=document.getElementById('netWorthChart').getContext('2d');var chart = new Chart(ctx, {type: 'line', data: {labels: [DATA_LABELS_HERE],datasets: [DATA_SETS_HERE]},options: {}});</script>"
 
-    length, datastr = getNetWorthDatasets(auc, outcome)
+        length, datastr = getNetWorthDatasets(auc, outcome)
 
-    retstr = retstr.replace("DATA_LABELS_HERE", getNetWorthDataLabels(length))
-    retstr = retstr.replace("DATA_SETS_HERE", datastr)
-
-    print retstr
-
+        retstr = retstr.replace("DATA_LABELS_HERE", getNetWorthDataLabels(length))
+        retstr = retstr.replace("DATA_SETS_HERE", datastr)
     return retstr
 
 def getNetWorthDataLabels(length):
@@ -117,12 +117,13 @@ def getNetWorthDatasets(auc, outcome):
     sortedNames, states = auc.getNetWorth(outcome)
     retstr = ""
     data = []
+    colors = getRandomColors(len(sortedNames))
 
     for x in xrange(0, len(sortedNames)):
         data.append([item[x] for item in states])
 
     for x in xrange(0, len(sortedNames)):
-        retstr += "{{label: \"{}\", fill:false, borderColor: 'rgb({})',data: [{}]}},".format(sortedNames[x], getLineColor(x), getDataString(data, x))
+        retstr += "{{label: \"{}\", fill:false, borderColor: 'rgb({})',data: [{}]}},".format(sortedNames[x], colors[x], getDataString(data, x))
 
     retstr = retstr[:-1]
 
@@ -141,7 +142,7 @@ def getDataString(data, n):
 def getRandomColors(count):
     colors = []
     for i in xrange(count):
-        colors.append('{},{},{}'.format(random.randint(0,255), random.randint(0,255), random.randint(0,255)))
+        colors.append('{},{},{}'.format(randint(0,255), randint(0,255), randint(0,255)))
     return colors
 
 def getLineColor(n):
@@ -150,19 +151,22 @@ def getLineColor(n):
     return colors[n]
 
 def auctionPage(auc):
-    retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><style>table, th, td {border: 1px solid black;}</style><link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\"><script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script>"
-    retstr += "</head><body><div class=\"container\"><div><h1>AUCTION_TITLE_HERE</h1><hr></div>CLOSED_INFO_HERE<div><h2>Market Status</h2>STATUS_HERE</div><div><h2>Leaderboard</h2>LEADERBOARD_HERE</div></div></body></html>"
+    retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\"><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script>"
+    retstr += "</head><body><div class=\"container\"><div><h1>AUCTION_TITLE_HERE</h1><hr></div>CLOSED_INFO_HERE<div><h2>Market Status</h2>STATUS_HERE</div><div><h2>Leaderboard</h2>LEADERBOARD_HERE<div>OUTCOME_SELECT OUTCOME_GRAPH</div></div></div></body></html>"
 
     retstr = retstr.replace("AUCTION_TITLE_HERE", "{}".format(auc.name))
     retstr = retstr.replace("CLOSED_INFO_HERE", getClosedInfo(auc))
     retstr = retstr.replace("STATUS_HERE", getStatusTable(auc))
     retstr = retstr.replace("LEADERBOARD_HERE", getLeaderboardTable(auc))
+    retstr = retstr.replace("OUTCOME_SELECT", getOutcomeSelect(auc))
+    outcomeIndex = auc.winningIndex if auc.winningIndex is not None else 0
+    retstr = retstr.replace("OUTCOME_GRAPH", netWorth(auc, outcomeIndex))
 
     return retstr
 
 def getClosedInfo(auc):
     retstr = '<h4>Auction Is Open</h4>'
-    if auc.winningIndex:
+    if auc.winningIndex is not None:
         payouts = 0
         for a in auc.accounts:
             payouts += a.bids[auc.winningIndex]
@@ -188,7 +192,7 @@ def getLeaderboardTable(auc):
 
     if auc.isAuctionOpen:
         retstr += "<th>Balance + Contracts Sold</th>"
-    elif auc.winningIndex:
+    elif auc.winningIndex is not None:
         retstr += "<th>Networth</th>"
 
     for x in auc.labels:
@@ -204,7 +208,7 @@ def getLeaderboardTable(auc):
             bidStr = bidStr[:-1]
             cost = auc.getCost(bidStr)
             a.networth = a.balance - cost
-        elif auc.winningIndex:
+        elif auc.winningIndex is not None:
             a.networth = a.balance + a.bids[auc.winningIndex]
 
     auc.accounts.sort(key=lambda a: a.networth, reverse=True)
@@ -213,7 +217,7 @@ def getLeaderboardTable(auc):
 
         retstr += "<tr><th>{}</th>".format(a.name)
         retstr += "<th>{}</th>".format(a.balance)
-        if auc.isAuctionOpen or auc.winningIndex:
+        if auc.isAuctionOpen or auc.winningIndex is not None:
             retstr += "<th>{}</th>".format(a.networth)
 
         for y in a.bids:
@@ -225,8 +229,23 @@ def getLeaderboardTable(auc):
 
     return retstr
 
+def getOutcomeSelect(auc):
+    retstr = ''
+    if auc.winningIndex is not None:
+        retstr = '<h3>Networths Over Trades</h3>'
+    if auc.winningIndex is None and os.path.isfile('trades.txt'):
+        retstr = '<script>function outcomeSelected(){var index = document.getElementById("outcomeSelect").selectedIndex; var url=window.location.href;'
+        retstr += ' url=url.substr(0, url.indexOf("5000")); url+="5000/getNetWorths/"+index+"/";'
+        retstr += ' $.ajax({url: url, success: function(result){ $("#netWorthChart").html(result);}});}</script>'
+        retstr += '<div class="col-md-4"><h3>Possible Outcomes</h3><label for="outcomeSelect">Winning Outcome (select one):</label>'
+        retstr += '<select class="form-control" onchange="outcomeSelected()" id="outcomeSelect">'
+        for o in auc.labels:
+            retstr += '<option>'+o+'</option>'
+        retstr += '</select></div>'
+    return retstr
+
 def helpPage(auc):
-    retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><style>table, th, td {border: 1px solid black;}</style><link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\"><script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script></head><body><div class=\"container\"><div><h1>AUCTION_TITLE_HERE</h1></div><hr><div><h2>Help Page</h2><p>Shove a new helpful guide here.</p></div></div></body></html>"
+    retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\"><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script></head><body><div class=\"container\"><div><h1>AUCTION_TITLE_HERE</h1></div><hr><div><h2>Help Page</h2><p>Shove a new helpful guide here.</p></div></div></body></html>"
 
     retstr = retstr.replace("AUCTION_TITLE_HERE", "{}".format(auc.name))
 
