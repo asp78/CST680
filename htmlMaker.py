@@ -95,21 +95,9 @@ def getUserDatasets(user, auc):
 def netWorth(auc, outcome):
     retstr = ''
     if os.path.isfile('trades.txt'):
-        retstr = "<canvas id=\"netWorthChart\"></canvas></div><script>var ctx=document.getElementById('netWorthChart').getContext('2d');var chart = new Chart(ctx, {type: 'line', data: {labels: [DATA_LABELS_HERE],datasets: [DATA_SETS_HERE]},options: {}});</script>"
-        #TODO: add scale to options above: xAxes: 
-        # [{
-        # type: "time",
-        # time: {
-        # 	format: timeFormat,
-        # 	// round: 'day'
-        # 	tooltipFormat: 'll HH:mm'
-        # },
-        # scaleLabel: {
-        # 	display: true,
-        # 	labelString: 'Date'
-        # }
-        # }, ],
-
+        retstr = "<canvas id=\"netWorthChart\"></canvas></div><script>var ctx=document.getElementById('netWorthChart').getContext('2d');var chart = new Chart(ctx, {type: 'line', data: {labels: [DATA_LABELS_HERE],datasets: [DATA_SETS_HERE]},"
+        retstr += "options: { scales: { xAxes: [{ type: 'time', time: { format: 'YYYY-MM-DD HH:mm:ss', tooltipFormat: 'll HH:mm:ss'}}]}}});</script>"
+        
         datastr, start, end = getNetWorthDataAndStartEnd(auc, outcome)
 
         retstr = retstr.replace("DATA_LABELS_HERE", getNetWorthDataLabels(start, end))
