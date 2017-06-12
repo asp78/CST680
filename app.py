@@ -98,7 +98,7 @@ def closeRegistration():
         print traceback.print_exc()
         return "An error occurred."
 
-@app.route('/closeAuction/', methods=['GET'])
+@app.route('/closeAuctionBunkCat/', methods=['GET'])
 def closeAuction():
     try:
         return a.closeAuction()
@@ -106,7 +106,7 @@ def closeAuction():
         print traceback.print_exc()
         return "An error occurred."
 
-@app.route('/winningOutcome/<index>/', methods=['GET'])
+@app.route('/winningOutcomeBunkCat/<index>/', methods=['GET'])
 def winningOutcome(index):
     try:
         return a.winningOutcome(index)
