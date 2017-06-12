@@ -1,9 +1,10 @@
 import numpy
 from random import randint
 import os.path
+from datetime import datetime
 
 def accountPage(user, auc):
-    retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\"><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script></head><body><div class=\"container\"><div><h1>AUCTION_TITLE_HERE</h1><hr><h2>USERNAME_HERE Details</h2><h3>Balance: BALANCE_HERE</h3></div><div><h3>Current bid placement</h3>BIDS_TABLE_HERE</div><div><h3>Place a new bet</h3>BET_FORM_HERE</div><div><h3>Bid History</h3><div style=\"width: 90%; height: 25%;\"><canvas id=\"myChart\"></canvas></div><script>var ctx=document.getElementById('myChart').getContext('2d');var chart = new Chart(ctx, {type: 'line', data: {labels: [DATA_LABELS_HERE],datasets: [DATA_SETS_HERE]},options: {scales:{yAxes:[{ticks:{stepSize:1}}]}}});</script></div></div></body></html>"
+    retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\"><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script></head><body><div class=\"container\"><div><h1>AUCTION_TITLE_HERE</h1><hr><h2>USERNAME_HERE Account Status</h2><h3>Balance: BALANCE_HERE</h3></div><div><h3>Current bid placement</h3>BIDS_TABLE_HERE</div><div><h3>Place a new bet</h3>BET_FORM_HERE</div><div><h3>Bid History</h3><div style=\"width: 90%; height: 25%;\"><canvas id=\"myChart\"></canvas></div><script>var ctx=document.getElementById('myChart').getContext('2d');var chart = new Chart(ctx, {type: 'line', data: {labels: [DATA_LABELS_HERE],datasets: [DATA_SETS_HERE]},options: {scales:{yAxes:[{ticks:{stepSize:1}}]}}});</script></div></div></body></html>"
 
     retstr = retstr.replace("AUCTION_TITLE_HERE", "{}".format(auc.name))
     retstr = retstr.replace("USERNAME_HERE", "{}".format(user.name))
@@ -84,7 +85,7 @@ def getUserDatasets(user, auc):
         data.append([item[x] for item in user.bidHistory])
 
     for x in xrange(0, user.bids.size):
-        retstr += "{{label: \"{}\", fill:false, borderColor: 'rgb({})',data: [{}]}},".format(auc.labels[x], getLineColor(x), getDataString(data, x))
+        retstr += "{{label: \"{}\", fill:false, steppedLine: true, borderColor: 'rgb({})',data: [{}]}},".format(auc.labels[x], getLineColor(x), getDataString(data, x))
 
     retstr = retstr[:-1]
 
@@ -93,47 +94,49 @@ def getUserDatasets(user, auc):
 def netWorth(auc, outcome):
     retstr = ''
     if os.path.isfile('trades.txt'):
-        retstr = "<canvas id=\"netWorthChart\"></canvas></div><script>var ctx=document.getElementById('netWorthChart').getContext('2d');var chart = new Chart(ctx, {type: 'line', data: {labels: [DATA_LABELS_HERE],datasets: [DATA_SETS_HERE]},options: {}});</script>"
+        retstr = "<canvas id=\"netWorthChart\"></canvas></div><script>var ctx=document.getElementById('netWorthChart').getContext('2d');var chart = new Chart(ctx, {type: 'line', data: {labels: [DATA_LABELS_HERE],datasets: [DATA_SETS_HERE]},"
+        retstr += "options: { scales: { xAxes: [{ type: 'time', time: { format: 'YYYY-MM-DD HH:mm:ss', tooltipFormat: 'll HH:mm:ss'}}]}}});</script>"
 
-        length, datastr = getNetWorthDatasets(auc, outcome)
+        datastr, start, end = getNetWorthDataAndStartEnd(auc, outcome)
 
-        retstr = retstr.replace("DATA_LABELS_HERE", getNetWorthDataLabels(length))
+        retstr = retstr.replace("DATA_LABELS_HERE", getNetWorthDataLabels(start, end))
         retstr = retstr.replace("DATA_SETS_HERE", datastr)
     return retstr
 
-def getNetWorthDataLabels(length):
-    retstr = ""
-
-    data = range(0, length)
-
-    for x in data:
-        retstr += "\"{}\",".format(x)
-
-    retstr = retstr[:-1]
+def getNetWorthDataLabels(start, end):
+    retstr = '"{}", "{}"'.format(start, end) #return them comma seperated
 
     return retstr
 
-def getNetWorthDatasets(auc, outcome):
+def getNetWorthDataAndStartEnd(auc, outcome):
     sortedNames, states = auc.getNetWorth(outcome)
     retstr = ""
-    data = []
     colors = getRandomColors(len(sortedNames))
 
     for x in xrange(0, len(sortedNames)):
-        data.append([item[x] for item in states])
-
-    for x in xrange(0, len(sortedNames)):
-        retstr += "{{label: \"{}\", fill:false, borderColor: 'rgb({})',data: [{}]}},".format(sortedNames[x], colors[x], getDataString(data, x))
+        retstr += "{{label: \"{}\", fill:false, steppedLine: true, borderColor: 'rgb({})',data: [{}]}},".format(sortedNames[x], colors[x], getNetWorthDataString(states, x))
 
     retstr = retstr[:-1]
 
-    return len(data[0]), retstr
+    return retstr, states[0][0], states[len(states)-1][0]
 
 def getDataString(data, n):
     retstr = ""
 
     for x in data[n]:
         retstr += "{},".format(x)
+
+    retstr = retstr[:-1]
+
+    return retstr
+
+def getNetWorthDataString(states, n):
+    retstr = ""
+
+    for s in states:
+        retstr += '{'
+        retstr += ' x:"{}", y:{}'.format( s[0], s[1][n])
+        retstr += '},'
 
     retstr = retstr[:-1]
 
@@ -158,8 +161,8 @@ def auctionPage(auc):
     retstr = retstr.replace("CLOSED_INFO_HERE", getClosedInfo(auc))
     retstr = retstr.replace("STATUS_HERE", getStatusTable(auc))
     retstr = retstr.replace("LEADERBOARD_HERE", getLeaderboardTable(auc))
-    retstr = retstr.replace("OUTCOME_SELECT", getOutcomeSelect(auc))
     outcomeIndex = auc.winningIndex if auc.winningIndex is not None else 0
+    retstr = retstr.replace("OUTCOME_SELECT", getOutcomeSelect(auc.labels, outcomeIndex))
     retstr = retstr.replace("OUTCOME_GRAPH", netWorth(auc, outcomeIndex))
 
     return retstr
@@ -183,7 +186,51 @@ def getStatusTable(auc):
         retstr += "<th>{}</th>".format(auc.prices[i])
         retstr += "<th>{}</th></tr>".format(auc.state[i])
 
-    retstr += "</tbody></table></div></div>"
+    retstr += "</tbody></table></div><div class=\"col-md-4\"><h3>Prices</h3><canvas id=\"pricesChart\"/><script>var ctx=document.getElementById('pricesChart').getContext('2d');var chart = new Chart(ctx, { type: 'doughnut', data: {labels: [PRICES_LABELS_HERE], datasets: [{data :[PRICES_DATA_HERE], backgroundColor : [PRICES_COLORS_HERE], label: 'data1'}],options: {responsive: true,legend: { position: 'top'}, animation: {animateScale: true, animateRotate: true}}}});</script></div><div class=\"col-md-4\"><h3>State</h3><canvas id=\"stateChart\"/><script>var ctx=document.getElementById('stateChart').getContext('2d');var chart = new Chart(ctx, { type: 'doughnut', data: {labels: [STATE_LABELS_HERE], datasets: [{data :[STATE_DATA_HERE], backgroundColor : [STATE_COLORS_HERE], label: 'data1'}],options: {responsive: true,legend: { position: 'top'}, animation: {animateScale: true, animateRotate: true}}}});</script></div></div>"
+
+    retstr = retstr.replace("PRICES_LABELS_HERE", getAuctionLabels(auc))
+    retstr = retstr.replace("PRICES_DATA_HERE", getPricesData(auc))
+    retstr = retstr.replace("PRICES_COLORS_HERE", getPricesColors(auc))
+
+    retstr = retstr.replace("STATE_LABELS_HERE", getAuctionLabels(auc))
+    retstr = retstr.replace("STATE_DATA_HERE", getStateData(auc))
+    retstr = retstr.replace("STATE_COLORS_HERE", getPricesColors(auc))
+
+    return retstr
+
+def getAuctionLabels(auc):
+    retstr = ""
+    for x in auc.labels:
+        retstr += "\"{}\",".format(x)
+
+    retstr = retstr[:-1]
+
+    return retstr
+
+def getPricesData(auc):
+    retstr = ""
+    for x in auc.prices:
+        retstr += "{},".format(x)
+
+    retstr = retstr[:-1]
+    return retstr
+
+def getStateData(auc):
+    retstr = ""
+    for x in auc.state:
+        retstr += "{},".format(x)
+
+    retstr = retstr[:-1]
+    return retstr
+
+def getPricesColors(auc):
+    retstr = ""
+    colors = getRandomColors(auc.prices.size);
+
+    for x in colors:
+        retstr += "'rgba({}, 0.5)',".format(x)
+
+    retstr = retstr[:-1]
     return retstr
 
 def getLeaderboardTable(auc):
@@ -229,18 +276,17 @@ def getLeaderboardTable(auc):
 
     return retstr
 
-def getOutcomeSelect(auc):
-    retstr = ''
-    if auc.winningIndex is not None:
-        retstr = '<h3>Networths Over Trades</h3>'
-    if auc.winningIndex is None and os.path.isfile('trades.txt'):
-        retstr = '<script>function outcomeSelected(){var index = document.getElementById("outcomeSelect").selectedIndex; var url=window.location.href;'
+def getOutcomeSelect(labels, selectedIndex):
+    retstr = '<h3>Networths Over Trades</h3>'
+    if os.path.isfile('trades.txt'):
+        retstr = '<script>function outcomeSelected(){chart.destroy(); var index = document.getElementById("outcomeSelect").selectedIndex; var url=window.location.href;'
         retstr += ' url=url.substr(0, url.indexOf("5000")); url+="5000/getNetWorths/"+index+"/";'
-        retstr += ' $.ajax({url: url, success: function(result){ $("#netWorthChart").html(result);}});}</script>'
+        retstr += ' $.ajax({url: url, success: function(result){ $("#netWorthChart").replaceWith(result);}});}</script>'
         retstr += '<div class="col-md-4"><h3>Possible Outcomes</h3><label for="outcomeSelect">Winning Outcome (select one):</label>'
         retstr += '<select class="form-control" onchange="outcomeSelected()" id="outcomeSelect">'
-        for o in auc.labels:
-            retstr += '<option>'+o+'</option>'
+        for i in xrange(len(labels)):
+            selected = 'selected' if i is selectedIndex else ''
+            retstr += '<option '+selected+'>'+labels[i]+'</option>'
         retstr += '</select></div>'
     return retstr
 
