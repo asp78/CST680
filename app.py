@@ -26,14 +26,6 @@ def home_page():
         print traceback.print_exc()
         return "An error occurred."
 
-@app.route('/getPrices/', methods=['GET'])
-def getPrices():
-    try:
-        return a.getPrices()
-    except Exception as e:
-        print traceback.print_exc()
-        return "An error occurred."
-
 @app.route('/getNetWorths/<outcome>/')
 def getNetWorth(outcome):
     try:

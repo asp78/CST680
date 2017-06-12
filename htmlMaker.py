@@ -8,7 +8,7 @@ def accountPage(user, auc):
 
     retstr = retstr.replace("AUCTION_TITLE_HERE", "{}".format(auc.name))
     retstr = retstr.replace("USERNAME_HERE", "{}".format(user.name))
-    retstr = retstr.replace("BALANCE_HERE", "{}".format(user.balance))
+    retstr = retstr.replace("BALANCE_HERE", "{}".format("%.5f" % float(user.balance)))
     retstr = retstr.replace("BIDS_TABLE_HERE", "{}".format(getUserBidsTable(user, auc)))
     retstr = retstr.replace("DATA_LABELS_HERE", getDataLabels(user))
     retstr = retstr.replace("DATA_SETS_HERE", getUserDatasets(user, auc))
@@ -175,7 +175,7 @@ def getClosedInfo(auc):
             payouts += a.bids[auc.winningIndex]
 
         retstr = '<h3>Winning Outcome: {}</h3>'.format(auc.labels[auc.winningIndex])
-        retstr += '<h3>Market Maker Balance: {}</h3>'.format(auc.balance - payouts)
+        retstr += '<h3>Market Maker Balance: {}</h3>'.format("%.5f" % float(auc.balance - payouts))
     return retstr
 
 def getStatusTable(auc):
@@ -183,7 +183,7 @@ def getStatusTable(auc):
     retstr +="<table class=\"table\"><thead><tr><th>Contract</th><th>Price</th><th># Owned</th></tr></thead><tbody>"
     for i in xrange(auc.numBins):
         retstr += "<tr><th>{}</th>".format(auc.labels[i])
-        retstr += "<th>{}</th>".format(auc.prices[i])
+        retstr += "<th>{}</th>".format("%.5f" % float(auc.prices[i]))
         retstr += "<th>{}</th></tr>".format(auc.state[i])
 
     retstr += "</tbody></table></div><div class=\"col-md-4\"><h3>Prices</h3><canvas id=\"pricesChart\"/><script>var ctx=document.getElementById('pricesChart').getContext('2d');var chart = new Chart(ctx, { type: 'doughnut', data: {labels: [PRICES_LABELS_HERE], datasets: [{data :[PRICES_DATA_HERE], backgroundColor : [PRICES_COLORS_HERE], label: 'data1'}],options: {responsive: true,legend: { position: 'top'}, animation: {animateScale: true, animateRotate: true}}}});</script></div><div class=\"col-md-4\"><h3>State</h3><canvas id=\"stateChart\"/><script>var ctx=document.getElementById('stateChart').getContext('2d');var chart = new Chart(ctx, { type: 'doughnut', data: {labels: [STATE_LABELS_HERE], datasets: [{data :[STATE_DATA_HERE], backgroundColor : [STATE_COLORS_HERE], label: 'data1'}],options: {responsive: true,legend: { position: 'top'}, animation: {animateScale: true, animateRotate: true}}}});</script></div></div>"
@@ -263,9 +263,9 @@ def getLeaderboardTable(auc):
     for a in auc.accounts:
 
         retstr += "<tr><th>{}</th>".format(a.name)
-        retstr += "<th>{}</th>".format(a.balance)
+        retstr += "<th>{}</th>".format("%.5f" % float(a.balance))
         if auc.isAuctionOpen or auc.winningIndex is not None:
-            retstr += "<th>{}</th>".format(a.networth)
+            retstr += "<th>{}</th>".format("%.5f" % float(a.networth))
 
         for y in a.bids:
             retstr += "<th>{}</th>".format(y)
