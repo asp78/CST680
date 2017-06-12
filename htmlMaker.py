@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy
 from random import randint
 import os.path
@@ -104,13 +103,7 @@ def netWorth(auc, outcome):
         retstr = retstr.replace("DATA_SETS_HERE", datastr)
     return retstr
 
-#TODO: this needs work
 def getNetWorthDataLabels(start, end):
-
-    # start = datetime.strptime(start, '%b %d %Y') Somehow get a date this is not working
-    # end = datetime.strptime(end, '%b %d %Y')
-    # find some number of points between start and end
-
     retstr = '"{}", "{}"'.format(start, end) #return them comma seperated
 
     return retstr
