@@ -39,7 +39,7 @@ class auction:
 
     def printPrices(self):
         with open('prices.txt', 'a') as outfile:
-            line = "{}".format(self.getTimeStamp())
+            line = "{},".format(self.getTimeStamp())
             for x in xrange(0, self.numBins):
                 line += "{},".format(self.prices[x])
 
