@@ -135,7 +135,7 @@ def getNetWorthDataString(states, n):
 
     for s in states:
         retstr += '{'
-        retstr += ' x:"{}", y:{}'.format( s[0], s[1][n])
+        retstr += ' x:"{}", y:{}'.format( s[0], "%.5f" % float(s[1][n]))
         retstr += '},'
 
     retstr = retstr[:-1]
@@ -210,7 +210,7 @@ def getAuctionLabels(auc):
 def getPricesData(auc):
     retstr = ""
     for x in auc.prices:
-        retstr += "{},".format(x)
+        retstr += "{},".format("%.5f" % float(x))
 
     retstr = retstr[:-1]
     return retstr
