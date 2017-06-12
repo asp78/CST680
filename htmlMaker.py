@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy
 from random import randint
 import os.path
@@ -92,15 +91,6 @@ def getUserDatasets(user, auc):
 
     return retstr
 
-def getAuctionLabels(auc):
-    retstr = ""
-    for x in auc.labels:
-        retstr += "\"{}\",".format(x)
-
-    retstr = retstr[:-1]
-
-    return retstr
-
 def netWorth(auc, outcome):
     retstr = ''
     if os.path.isfile('trades.txt'):
@@ -113,13 +103,7 @@ def netWorth(auc, outcome):
         retstr = retstr.replace("DATA_SETS_HERE", datastr)
     return retstr
 
-#TODO: this needs work
 def getNetWorthDataLabels(start, end):
-
-    # start = datetime.strptime(start, '%b %d %Y') Somehow get a date this is not working
-    # end = datetime.strptime(end, '%b %d %Y')
-    # find some number of points between start and end
-
     retstr = '"{}", "{}"'.format(start, end) #return them comma seperated
 
     return retstr
@@ -202,17 +186,38 @@ def getStatusTable(auc):
         retstr += "<th>{}</th>".format(auc.prices[i])
         retstr += "<th>{}</th></tr>".format(auc.state[i])
 
-    retstr += "</tbody></table></div><div class=\"col-md-4\"><h3>Prices</h3><canvas id=\"pricesChart\"/><script>var ctx=document.getElementById('pricesChart').getContext('2d');var chart = new Chart(ctx, { type: 'doughnut', data: {labels: [PRICES_LABELS_HERE], datasets: [{data :[PRICES_DATA_HERE], backgroundColor : [PRICES_COLORS_HERE], label: 'data1'}],options: {responsive: true,legend: { position: 'top'}, animation: {animateScale: true, animateRotate: true}}}});</script></div></div>"
+    retstr += "</tbody></table></div><div class=\"col-md-4\"><h3>Prices</h3><canvas id=\"pricesChart\"/><script>var ctx=document.getElementById('pricesChart').getContext('2d');var chart = new Chart(ctx, { type: 'doughnut', data: {labels: [PRICES_LABELS_HERE], datasets: [{data :[PRICES_DATA_HERE], backgroundColor : [PRICES_COLORS_HERE], label: 'data1'}],options: {responsive: true,legend: { position: 'top'}, animation: {animateScale: true, animateRotate: true}}}});</script></div><div class=\"col-md-4\"><h3>State</h3><canvas id=\"stateChart\"/><script>var ctx=document.getElementById('stateChart').getContext('2d');var chart = new Chart(ctx, { type: 'doughnut', data: {labels: [STATE_LABELS_HERE], datasets: [{data :[STATE_DATA_HERE], backgroundColor : [STATE_COLORS_HERE], label: 'data1'}],options: {responsive: true,legend: { position: 'top'}, animation: {animateScale: true, animateRotate: true}}}});</script></div></div>"
 
     retstr = retstr.replace("PRICES_LABELS_HERE", getAuctionLabels(auc))
     retstr = retstr.replace("PRICES_DATA_HERE", getPricesData(auc))
     retstr = retstr.replace("PRICES_COLORS_HERE", getPricesColors(auc))
+
+    retstr = retstr.replace("STATE_LABELS_HERE", getAuctionLabels(auc))
+    retstr = retstr.replace("STATE_DATA_HERE", getStateData(auc))
+    retstr = retstr.replace("STATE_COLORS_HERE", getPricesColors(auc))
+
+    return retstr
+
+def getAuctionLabels(auc):
+    retstr = ""
+    for x in auc.labels:
+        retstr += "\"{}\",".format(x)
+
+    retstr = retstr[:-1]
 
     return retstr
 
 def getPricesData(auc):
     retstr = ""
     for x in auc.prices:
+        retstr += "{},".format(x)
+
+    retstr = retstr[:-1]
+    return retstr
+
+def getStateData(auc):
+    retstr = ""
+    for x in auc.state:
         retstr += "{},".format(x)
 
     retstr = retstr[:-1]
