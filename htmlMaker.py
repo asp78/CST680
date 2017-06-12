@@ -5,7 +5,7 @@ import os.path
 from datetime import datetime
 
 def accountPage(user, auc):
-    retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\"><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script></head><body><div class=\"container\"><div><h1>AUCTION_TITLE_HERE</h1><hr><h2>USERNAME_HERE Details</h2><h3>Balance: BALANCE_HERE</h3></div><div><h3>Current bid placement</h3>BIDS_TABLE_HERE</div><div><h3>Place a new bet</h3>BET_FORM_HERE</div><div><h3>Bid History</h3><div style=\"width: 90%; height: 25%;\"><canvas id=\"myChart\"></canvas></div><script>var ctx=document.getElementById('myChart').getContext('2d');var chart = new Chart(ctx, {type: 'line', data: {labels: [DATA_LABELS_HERE],datasets: [DATA_SETS_HERE]},options: {scales:{yAxes:[{ticks:{stepSize:1}}]}}});</script></div></div></body></html>"
+    retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\"><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script></head><body><div class=\"container\"><div><h1>AUCTION_TITLE_HERE</h1><hr><h2>USERNAME_HERE Account Status</h2><h3>Balance: BALANCE_HERE</h3></div><div><h3>Current bid placement</h3>BIDS_TABLE_HERE</div><div><h3>Place a new bet</h3>BET_FORM_HERE</div><div><h3>Bid History</h3><div style=\"width: 90%; height: 25%;\"><canvas id=\"myChart\"></canvas></div><script>var ctx=document.getElementById('myChart').getContext('2d');var chart = new Chart(ctx, {type: 'line', data: {labels: [DATA_LABELS_HERE],datasets: [DATA_SETS_HERE]},options: {scales:{yAxes:[{ticks:{stepSize:1}}]}}});</script></div></div></body></html>"
 
     retstr = retstr.replace("AUCTION_TITLE_HERE", "{}".format(auc.name))
     retstr = retstr.replace("USERNAME_HERE", "{}".format(user.name))
@@ -97,7 +97,7 @@ def netWorth(auc, outcome):
     if os.path.isfile('trades.txt'):
         retstr = "<canvas id=\"netWorthChart\"></canvas></div><script>var ctx=document.getElementById('netWorthChart').getContext('2d');var chart = new Chart(ctx, {type: 'line', data: {labels: [DATA_LABELS_HERE],datasets: [DATA_SETS_HERE]},"
         retstr += "options: { scales: { xAxes: [{ type: 'time', time: { format: 'YYYY-MM-DD HH:mm:ss', tooltipFormat: 'll HH:mm:ss'}}]}}});</script>"
-        
+
         datastr, start, end = getNetWorthDataAndStartEnd(auc, outcome)
 
         retstr = retstr.replace("DATA_LABELS_HERE", getNetWorthDataLabels(start, end))
@@ -168,8 +168,8 @@ def auctionPage(auc):
     retstr = retstr.replace("CLOSED_INFO_HERE", getClosedInfo(auc))
     retstr = retstr.replace("STATUS_HERE", getStatusTable(auc))
     retstr = retstr.replace("LEADERBOARD_HERE", getLeaderboardTable(auc))
-    retstr = retstr.replace("OUTCOME_SELECT", getOutcomeSelect(auc))
     outcomeIndex = auc.winningIndex if auc.winningIndex is not None else 0
+    retstr = retstr.replace("OUTCOME_SELECT", getOutcomeSelect(auc.labels, outcomeIndex))
     retstr = retstr.replace("OUTCOME_GRAPH", netWorth(auc, outcomeIndex))
 
     return retstr
@@ -239,18 +239,17 @@ def getLeaderboardTable(auc):
 
     return retstr
 
-def getOutcomeSelect(auc):
-    retstr = ''
-    if auc.winningIndex is not None:
-        retstr = '<h3>Networths Over Trades</h3>'
-    if auc.winningIndex is None and os.path.isfile('trades.txt'):
-        retstr = '<script>function outcomeSelected(){var index = document.getElementById("outcomeSelect").selectedIndex; var url=window.location.href;'
+def getOutcomeSelect(labels, selectedIndex):
+    retstr = '<h3>Networths Over Trades</h3>'
+    if os.path.isfile('trades.txt'):
+        retstr = '<script>function outcomeSelected(){chart.destroy(); var index = document.getElementById("outcomeSelect").selectedIndex; var url=window.location.href;'
         retstr += ' url=url.substr(0, url.indexOf("5000")); url+="5000/getNetWorths/"+index+"/";'
-        retstr += ' $.ajax({url: url, success: function(result){ $("#netWorthChart").html(result);}});}</script>'
+        retstr += ' $.ajax({url: url, success: function(result){ $("#netWorthChart").replaceWith(result);}});}</script>'
         retstr += '<div class="col-md-4"><h3>Possible Outcomes</h3><label for="outcomeSelect">Winning Outcome (select one):</label>'
         retstr += '<select class="form-control" onchange="outcomeSelected()" id="outcomeSelect">'
-        for o in auc.labels:
-            retstr += '<option>'+o+'</option>'
+        for i in xrange(len(labels)):
+            selected = 'selected' if i is selectedIndex else ''
+            retstr += '<option '+selected+'>'+labels[i]+'</option>'
         retstr += '</select></div>'
     return retstr
 
