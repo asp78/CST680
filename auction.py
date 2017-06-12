@@ -114,7 +114,11 @@ class auction:
         return str(self.prices)
 
     def getCost(self, bid):
-        bid = numpy.array(map(int, bid.split(',')))
+        try:
+            bid = numpy.array(map(int, bid.split(',')))
+        except ValueError:
+            print "CLOSE ONE"
+            return "An error occurred."
         retval = "Invalid bid size, include all states even if they are zeros."
 
         if bid.size == self.state.size:
@@ -123,7 +127,11 @@ class auction:
         return retval
 
     def makeTrade(self, userId, bid):
-        bid = numpy.array(map(int, bid.split(',')))
+        try:
+            bid = numpy.array(map(int, bid.split(',')))
+        except ValueError:
+            print "CLOSE ONE"
+            return "An error occurred."
 
         retval = "User {} does not exist".format(userId)
         # If the bidder has enough money to make the trade
