@@ -291,8 +291,47 @@ def getOutcomeSelect(labels, selectedIndex):
     return retstr
 
 def helpPage(auc):
-    retstr = "<!DOCTYPE html><meta charset=\"utf-8\"><html><head><link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\"><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script></head><body><div class=\"container\"><div><h1>AUCTION_TITLE_HERE</h1></div><hr><div><h2>Help Page</h2><p>Shove a new helpful guide here.</p></div></div></body></html>"
+    url = 'http://68.82.242.210:5000/'
 
-    retstr = retstr.replace("AUCTION_TITLE_HERE", "{}".format(auc.name))
+    retstr = '<!DOCTYPE html><meta charset=\"utf-8\"><html><head><link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\"><script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script><script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js\"></script></head>'
+    retstr += '<body><div class=\"container\">HELP_PAGE_HERE</div></div></body></html>'
+
+    helpPageHTML = '<div class="marketing col-md-10"><h1>AUCTION_TITLE_HERE Help Page</h1>'
+    helpPageHTML += '<h3>Key Pages</h3>'
+    helpPageHTML += '<p>There are two key pages: the Auction Page, where you can view the'
+    helpPageHTML += ' overall status of the auction, and your Account Page, where you'
+    helpPageHTML += ' can view your balance and purchased contract and can make new trades.'
+    helpPageHTML += ' It is also now possible to download the price, state, and trade log files from the links below.</p>'
+    helpPageHTML += '<h4>Auction Page</h4><a href="'+url+'">'+url+'</a>'
+    helpPageHTML += '<h4>User Page</h4><p>'+url+'status/yourUserId</p>'
+    helpPageHTML += '<h4>Price Logs</h4><a href="'+url+'getPriceLogs/">'+url+'getPriceLogs/</a>'
+    helpPageHTML += '<h4>State Logs</h4><a href="'+url+'getStateLogs/">'+url+'getStateLogs/</a>'
+    helpPageHTML += '<h4>Trade Logs</h4><a href="'+url+'getTradeLogs/">'+url+'getTradeLogs/</a>'
+    helpPageHTML += '<br><h3>Key Equations</h3>'
+    helpPageHTML += '<p>The market marker relies on 3 key functions to operate. C and makeTrade both use the variable B, which is a constant (in this case 3) and which allows for the adjustment of the market\'s liquidity.'
+    helpPageHTML += ' The first function, C, is a cost function that computes the cost to the market maker to exist in the given state. Here a state is an array, with an index for each of the possible outcomes, containing the number of contracts that are owned for that outcome.</p>'
+    helpPageHTML += '''<pre><code>def C(state):
+    sum = 0
+    for s in state:
+        sum += math.exp(s / B)
+    return B * math.log(sum)</code></pre>'''
+    helpPageHTML += '<p>The second function, getTotalPrice, calculates the cost for the market maker to move from the given current state to the new state brought about by the given bid. Here a bid is is an array, with an index for each of the possible outcomes, containing the number of contracts to be bought for that outcome. The returned cost is the price a trade pays for making the bid.</p>'
+    helpPageHTML += '''<pre><code>def getTotalPrice(currentState, bid):
+    newState = bid + currentState
+    return C(newState) - C(currentState)</code></pre>'''
+    helpPageHTML += '<p>The third function, makeTrade, changes the current state to a new state given a new bid, and updates the prices for each outcome given the bid.</p>'
+    helpPageHTML += '''<pre><code>def def makeTrade(currentState, prices, bid):
+    newState = currentState + bid
+    sum = 0
+    for outcome in newState:
+        sum += math.exp(outcome / B)
+
+    for i in xrange(0, bid.size):
+        prices[i] = math.exp(newState[i] / B) / sum
+
+    return newState, prices'''
+
+    helpPageHTML = helpPageHTML.replace("AUCTION_TITLE_HERE", "{}".format(auc.name))
+    retstr = retstr.replace("HELP_PAGE_HERE", helpPageHTML)
 
     return retstr
